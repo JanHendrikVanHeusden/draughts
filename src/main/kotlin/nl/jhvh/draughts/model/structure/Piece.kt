@@ -1,10 +1,12 @@
 package nl.jhvh.draughts.model.structure
 
-import nl.jhvh.draughts.model.move.CapturingTreeMovable
-import nl.jhvh.draughts.model.move.PieceMovementChain
-import nl.jhvh.draughts.model.move.TreeMovable
+import nl.jhvh.draughts.model.BoardElement
+import nl.jhvh.draughts.model.Coordinate
+import nl.jhvh.draughts.model.movement.base.PieceMoveChain
+import nl.jhvh.draughts.model.movement.options.CapturingTreeMovable
+import nl.jhvh.draughts.model.movement.options.TreeMovable
 
-interface DraughtsPiece: TreeMovable, BoardElement {
+interface Piece: TreeMovable, BoardElement {
 
     val initialCoordinate: Coordinate
 
@@ -15,7 +17,7 @@ interface DraughtsPiece: TreeMovable, BoardElement {
 
     var isCrowned: Boolean
 
-    fun move(chain: PieceMovementChain)
+    fun move(chain: PieceMoveChain)
 
     fun movementTree(): CapturingTreeMovable
 

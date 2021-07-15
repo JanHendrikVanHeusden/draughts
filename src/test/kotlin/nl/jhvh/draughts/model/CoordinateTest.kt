@@ -1,7 +1,7 @@
 package nl.jhvh.draughts.model
 
+import nl.jhvh.draughts.model.structure.Coordinate
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows

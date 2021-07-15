@@ -1,4 +1,4 @@
-package nl.jhvh.draughts.model
+package nl.jhvh.draughts.model.structure
 
 import nl.jhvh.draughts.model.move.CapturingTreeMovable
 import nl.jhvh.draughts.model.move.PieceMovementChain
@@ -8,6 +8,7 @@ interface DraughtsPiece: TreeMovable, BoardElement {
 
     val initialCoordinate: Coordinate
 
+    /** The current [Coordinate] of this piece; or `null` if the piece has been captured */
     var currentCoordinate: Coordinate?
 
     var isCaptured: Boolean

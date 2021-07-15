@@ -1,6 +1,10 @@
-package nl.jhvh.draughts.model
+package nl.jhvh.draughts.model.structure
 
 import nl.jhvh.draughts.isEven
+import nl.jhvh.draughts.model.boardLength
+import nl.jhvh.draughts.model.boardWidth
+import nl.jhvh.draughts.model.maxPiecePositionNumber
+import nl.jhvh.draughts.model.squareCount
 
 /**
  * A [Coordinate] defines the position of a playable (accessible) square on a board. Playable means that a piece can enter that field.

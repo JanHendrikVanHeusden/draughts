@@ -1,5 +1,5 @@
 package nl.jhvh.draughts.model
 
-interface Board {
+interface Board: BoardElement {
 
 }

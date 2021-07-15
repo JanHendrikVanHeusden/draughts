@@ -2,7 +2,7 @@ package nl.jhvh.draughts.service
 
 import nl.jhvh.draughts.model.Board
 import nl.jhvh.draughts.model.Coordinate
-import nl.jhvh.draughts.model.Move
+import nl.jhvh.draughts.model.move.Move
 
 interface DraughtsServable {
 

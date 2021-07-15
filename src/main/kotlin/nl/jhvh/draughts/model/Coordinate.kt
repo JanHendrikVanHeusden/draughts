@@ -1,7 +1,6 @@
 package nl.jhvh.draughts.model
 
 import nl.jhvh.draughts.isEven
-import java.lang.IllegalArgumentException
 
 /**
  * A [Coordinate] defines the position of a playable (accessible) square on a board. Playable means that a piece can enter that field.

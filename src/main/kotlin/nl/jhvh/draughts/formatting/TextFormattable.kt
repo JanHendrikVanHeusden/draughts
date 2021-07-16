@@ -1,14 +1,18 @@
 package nl.jhvh.draughts.formatting
 
+import nl.jhvh.draughts.formatting.textformat.FormattableList
+import nl.jhvh.draughts.model.base.BoardElement
+
 
 /**
  * Interface to support formatting of Draughts elements ([BoardElement]s) to a human or machine readable format.
  *
  * The design patterns used is [Visitor Pattern](https://en.wikipedia.org/wiki/Visitor_pattern#Java_example).
  *  * The [format] method in this interface represents the 'accept' method of the classic Visitor Pattern.
- *  @param T The target type to which the [BoardElement] is to be formatted
+ * @param E The [BoardElement] type to format
+ * @param T The target type to which the [BoardElement] is to be formatted
  */
-interface Formattable<T: Any> {
+interface TextFormattable<E: BoardElement, T: FormattableList> {
 
     /**
      * Output a draughts [BoardElement] (e.g. [Board], [DraughtsPiece], [Square]),
@@ -18,5 +22,5 @@ interface Formattable<T: Any> {
      *  * The element to print will accept the [DraughtsFormatting] as a delegate for the print formatting
      * @return The draughts element as formatted to [T]
      */
-    fun format(draughtsFormatter: DraughtsFormatting<T>): T
+    fun format(draughtsFormatter: DraughtsFormatting<E, T>): T
 }

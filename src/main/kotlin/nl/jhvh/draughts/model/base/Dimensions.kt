@@ -32,4 +32,10 @@ const val maxPiecePositionNumber = boardWidth * boardLength / 2
 val positionRange: IntRange = minPiecePositionNumber..maxPiecePositionNumber
 
 /** The initial number of pieces for each player */
-const val numberOfPiecesPerPlayer = piecesPerRow * initialOccupiedRowsPerColor
+const val piecesPerPlayer = piecesPerRow * initialOccupiedRowsPerColor
+
+const val startingColor: String = "white"
+const val secondColor: String = "black"
+
+const val playableSquareColor = "dark"
+const val nonPlayableSquareColor = "light"

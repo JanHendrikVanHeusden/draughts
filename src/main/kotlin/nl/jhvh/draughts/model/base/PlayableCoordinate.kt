@@ -3,26 +3,35 @@ package nl.jhvh.draughts.model.base
 import nl.jhvh.draughts.isEven
 
 /**
- * A [Coordinate] defines the position of a playable (accessible) square on a board. Playable means that a piece can enter that field.
- * So on a normal draughts board (international draughts), only the dark fields have a [Coordinate].
+ * A [PlayableCoordinate] defines the position of a playable (accessible) square on a board.
+ * Playable means that a piece is allowed to enter that field (in international draughts, this would be a dark field).
+ * So on a board of international draughts, only the dark fields have a [PlayableCoordinate].
  * See [Draughts board diagram with position numbers](https://upload.wikimedia.org/wikipedia/commons/d/da/Nummeringdambord.jpg)
  *
- * @constructor  Constructs a [Coordinate] by its position number.
+ * @constructor  Constructs a [PlayableCoordinate] by its position number.
  * @param position The position number, according to draughts numbering convention.
  * @throws IllegalArgumentException if [position] is outside the board boundaries
  */
-data class Coordinate constructor(val position: Int) {
-
+data class PlayableCoordinate constructor(val position: Int): Comparable<PlayableCoordinate> {
     /**
-     * Constructs a [Coordinate] by x and y indices, zero based, with lower left square = (0,0) and upper right square = (9,9)
+     * Constructs a [PlayableCoordinate] by x and y indices, zero based, with lower left square = (0,0) and upper right square = (9,9)
      * @param x zero based left-to-right index
      * @param y zero based bottom-to-top index
      * @throws IllegalArgumentException if combination of ([x], [y]) indicates a non-playable (non-accessible) field, or outside the board boundaries
      */
-    constructor(x: Int, y: Int) : this (xyCoordinatesToPosition(x, y))
+    constructor(x: Int, y: Int) : this (xyToPosition(x, y))
+
+    /**
+     * Constructs a [PlayableCoordinate] by a [Pair] of x and y indices, zero based, with lower left square = (0,0) and upper right square = (9,9)
+     * @param xy [Pair] of indexes, [Pair.first] being [x], [Pair.second] being [y]
+     * @throws IllegalArgumentException if combination of ([x], [y]) indicates a non-playable (non-accessible) field, or outside the board boundaries
+     */
+    constructor(xy: Pair<Int, Int>) : this (xy.first, xy.second)
 
     val y: Int = boardLength - ((this.position*2-1) / boardLength) -1
     val x: Int = (this.position*2-1) % boardWidth - (if (y.isEven()) 1 else 0)
+
+    val xy: Pair<Int, Int> = Pair(x, y)
 
     init {
         validatePosition()
@@ -35,10 +44,20 @@ data class Coordinate constructor(val position: Int) {
 
     override fun toString() = "${this.javaClass.simpleName}(position=$position, x=$x, y=$y)"
 
+    override fun compareTo(other: PlayableCoordinate): Int = this.position
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+        return position == (other as PlayableCoordinate).position
+    }
+
+    override fun hashCode(): Int = position
+
 }
 
 @Throws(IllegalArgumentException::class)
-private fun xyCoordinatesToPosition(x: Int, y: Int): Int {
+private fun xyToPosition(x: Int, y: Int): Int {
     validateIndices(x, y)
     val tmpPosition = squareCount - boardLength * (y + 1) + (if (y.isEven()) (x + 2) else (x + 1))
     require(tmpPosition.isEven()) { "Given values x = $x and y = $y indicate a non-playable position" }
@@ -55,7 +74,7 @@ private fun validateIndices(x: Int, y: Int) {
 // See the README.md file in this project (or Wikipedia etc.) for numbering convention of draughts.
 // Below some conversions from position to (x, y) coordinates
 //    1 = (1, 9)
-//        (2, 9) -> not a playable field, doesn't have a number!!
+//        (2, 9) -> not a playable field, doesn't have a position number!!
 //    2 = (3, 9)
 //    3 = (5, 9)
 //    4 = (7, 9)

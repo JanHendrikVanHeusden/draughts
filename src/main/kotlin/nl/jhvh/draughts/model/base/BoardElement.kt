@@ -1,5 +1,9 @@
 package nl.jhvh.draughts.model.base
 
-import nl.jhvh.draughts.formatting.Formattable
+import nl.jhvh.draughts.formatting.TextFormattable
+import nl.jhvh.draughts.formatting.textformat.FormattableList
+import nl.jhvh.draughts.model.structure.Board
 
-interface BoardElement: Formattable<Any>
+interface BoardElement: TextFormattable<BoardElement, FormattableList> {
+    val board: Board
+}

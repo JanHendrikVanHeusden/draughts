@@ -4,7 +4,7 @@ val lineSeparator: String = System.lineSeparator()
 
 
 /** [List]<[String]> with [toString] overridden for of formatting board elements */
-class FormattableList(collection: List<String> = emptyList()):
+open class FormattableList(collection: List<String> = emptyList()):
     List<String> by ArrayList<String>(collection) {
 
     /**

@@ -1,5 +1,10 @@
 package nl.jhvh.draughts.model
 
+import nl.jhvh.draughts.model.base.Coordinate
+import nl.jhvh.draughts.model.base.boardLength
+import nl.jhvh.draughts.model.base.boardWidth
+import nl.jhvh.draughts.model.base.maxPiecePositionNumber
+import nl.jhvh.draughts.model.base.minPiecePositionNumber
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -70,7 +75,7 @@ internal class CoordinateTest {
 
         exception = assertThrows { Coordinate(0) }
         assertThat(exception.message).isEqualTo("position must be greater than zero, but is 0" )
-        exception = assertThrows { Coordinate(minPiecePositionNumber-1) }
+        exception = assertThrows { Coordinate(minPiecePositionNumber -1) }
         assertThat(exception.message).isEqualTo("position must be greater than zero, but is 0" )
         exception = assertThrows { Coordinate(-1) }
         assertThat(exception.message).isEqualTo("position must be greater than zero, but is -1" )
@@ -79,9 +84,9 @@ internal class CoordinateTest {
         exception = assertThrows { Coordinate(51) }
         assertThat(exception.message).isEqualTo("position must be at most $maxPiecePositionNumber, but is 51")
         exception = assertThrows { Coordinate(maxPiecePositionNumber + 1) }
-        assertThat(exception.message).isEqualTo("position must be at most $maxPiecePositionNumber, but is ${maxPiecePositionNumber+1}")
+        assertThat(exception.message).isEqualTo("position must be at most $maxPiecePositionNumber, but is ${maxPiecePositionNumber +1}")
         exception = assertThrows { Coordinate(maxPiecePositionNumber + 30) }
-        assertThat(exception.message).isEqualTo("position must be at most $maxPiecePositionNumber, but is ${maxPiecePositionNumber+30}" )
+        assertThat(exception.message).isEqualTo("position must be at most $maxPiecePositionNumber, but is ${maxPiecePositionNumber +30}" )
     }
 
     @Test

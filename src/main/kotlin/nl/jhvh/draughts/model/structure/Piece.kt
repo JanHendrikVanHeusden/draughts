@@ -1,7 +1,7 @@
 package nl.jhvh.draughts.model.structure
 
-import nl.jhvh.draughts.model.BoardElement
-import nl.jhvh.draughts.model.Coordinate
+import nl.jhvh.draughts.model.base.BoardElement
+import nl.jhvh.draughts.model.base.Coordinate
 import nl.jhvh.draughts.model.movement.base.PieceMoveChain
 import nl.jhvh.draughts.model.movement.options.CapturingTreeMovable
 import nl.jhvh.draughts.model.movement.options.TreeMovable

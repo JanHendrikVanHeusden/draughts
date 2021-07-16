@@ -1,4 +1,4 @@
-package nl.jhvh.draughts.model
+package nl.jhvh.draughts.model.base
 
 /** The number of pieces (occupied squares) on a row when the game starts */
 const val piecesPerRow = 5

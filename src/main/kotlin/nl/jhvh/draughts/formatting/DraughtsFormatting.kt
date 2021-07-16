@@ -1,4 +1,3 @@
 package nl.jhvh.draughts.formatting
 
-class DraughtsFormatting {
-}
+interface DraughtsFormatting<out Any>

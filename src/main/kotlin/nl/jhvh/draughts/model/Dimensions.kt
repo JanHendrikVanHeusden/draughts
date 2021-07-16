@@ -13,7 +13,7 @@ const val boardLength = 10 // with draughts and checkers, the board is always sq
 const val squareCount = boardWidth * boardLength
 
 /** The number of rows occupied initially per color */
-const val initialOccupiedRowsPerColor = 4 // this number * 2 must always be less than boardLength, to allow space for moving
+const val initialOccupiedRowsPerColor = 4 // this number * 2 must be less than boardLength, to allow space for moving the pieces
 
 /** The initial number of pieces provided to each player at the start of the game */
 const val piecesPerColor = initialOccupiedRowsPerColor * piecesPerRow

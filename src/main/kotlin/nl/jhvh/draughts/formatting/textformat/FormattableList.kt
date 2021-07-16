@@ -1,4 +1,4 @@
-package nl.jhvh.draughts.formatting
+package nl.jhvh.draughts.formatting.textformat
 
 val lineSeparator: String = System.lineSeparator()
 

@@ -1,4 +1,5 @@
 package nl.jhvh.draughts.model
 
-interface BoardElement {
-}
+import nl.jhvh.draughts.formatting.Formattable
+
+interface BoardElement: Formattable<Any>

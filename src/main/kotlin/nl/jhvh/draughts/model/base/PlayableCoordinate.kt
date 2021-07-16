@@ -42,7 +42,7 @@ data class PlayableCoordinate constructor(val position: Int): Comparable<Playabl
         require(this.position <= maxPiecePositionNumber) { "position must be at most $maxPiecePositionNumber, but is ${this.position}" }
     }
 
-    override fun toString() = "${this.javaClass.simpleName}(position=$position, x=$x, y=$y)"
+    override fun toString(): String = "${this.javaClass.simpleName}(position=$position, x=$x, y=$y)"
 
     override fun compareTo(other: PlayableCoordinate): Int = this.position
 

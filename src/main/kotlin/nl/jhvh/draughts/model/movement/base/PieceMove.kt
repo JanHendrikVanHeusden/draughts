@@ -1,4 +1,3 @@
 package nl.jhvh.draughts.model.movement.base
 
-interface PieceMove: Move, Capturing {
-}
+interface PieceMove: Move, Capturing

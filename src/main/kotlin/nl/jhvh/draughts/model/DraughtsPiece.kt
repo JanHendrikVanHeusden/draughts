@@ -11,7 +11,7 @@ import nl.jhvh.draughts.model.movement.options.TreeMovable
 import nl.jhvh.draughts.model.structure.Board
 import nl.jhvh.draughts.model.structure.Piece
 
-class DraughtsPiece(override val board: Board, override val initialCoordinate: PlayableCoordinate, override val playerType: PlayerType) : Piece {
+internal class DraughtsPiece(override val board: Board, override val initialCoordinate: PlayableCoordinate, override val playerType: PlayerType) : Piece {
 
     override var currentCoordinate: PlayableCoordinate? = initialCoordinate
         set(value) {
@@ -53,8 +53,7 @@ class DraughtsPiece(override val board: Board, override val initialCoordinate: P
 
     override fun compareTo(other: Piece) = this.initialCoordinate.position
 
-    override fun toString(): String {
-        return "${this.javaClass.simpleName}(initialCoordinate=$initialCoordinate, playerType=$playerType, currentCoordinate=$currentCoordinate, isCaptured=$isCaptured, isCrowned=$isCrowned)"
-    }
+    override fun toString(): String =
+        "${this.javaClass.simpleName}(initialCoordinate=$initialCoordinate, playerType=$playerType, currentCoordinate=$currentCoordinate, isCaptured=$isCaptured, isCrowned=$isCrowned)"
 
 }

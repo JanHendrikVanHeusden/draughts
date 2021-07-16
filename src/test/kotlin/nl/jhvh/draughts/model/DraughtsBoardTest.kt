@@ -14,11 +14,11 @@ import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 /**
- * This is an integration test in the sense that it also tests the behaviour of the comprising [BoardElement]s
+ * This is an integration test in the sense that it also tests some behaviour of the comprising [BoardElement]s
  * that are constructed and initialized on construction of the [DraughtsBoard], e.g. [DraughtsBoard.squares],
  * [DraughtsBoard.playableCoordinates], [DraughtsBoard.allPieces] etc.; these are not mocked
  */
-internal class DraughtsBoardIT {
+internal class DraughtsBoardTest {
 
     private val subject: Board = DraughtsBoard()
 

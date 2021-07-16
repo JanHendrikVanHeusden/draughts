@@ -11,17 +11,12 @@ open class FormattableList(collection: List<String> = emptyList()):
      * Produces desired results when formatting a draughts board or board elements
      * @return The content of each line, separated by [lineSeparator] = [System.lineSeparator]
      */
-    override fun toString(): String {
-        return this.joinToString(separator = lineSeparator)
-    }
+    override fun toString(): String = this.joinToString(separator = lineSeparator)
 
     /** [equals] based [List.equals] */
-    override fun equals(other: Any?): Boolean {
-        return this.toList() == other
-    }
+    override fun equals(other: Any?): Boolean = this.toList() == other
 
     /** [hashCode] based [List.hashCode] */
-    override fun hashCode(): Int {
-        return this.toList().hashCode()
-    }
+    override fun hashCode(): Int = this.toList().hashCode()
+
 }

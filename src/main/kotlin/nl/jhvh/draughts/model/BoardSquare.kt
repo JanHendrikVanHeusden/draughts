@@ -15,7 +15,9 @@ data class BoardSquare(override val board: Board, override val xy: Pair<Int, Int
 
     override fun compareTo(other: Square): Int = xy.first + xy.first * xy.second
 
-    override fun equals(other: Any?): Boolean = other === this || (other is BoardSquare && other.board === this.board && other.xy == this.xy)
+    override fun equals(other: Any?): Boolean =
+        other === this || (other is BoardSquare && other.board === this.board && other.xy == this.xy)
 
     override fun hashCode(): Int = this.xy.hashCode()
+
 }

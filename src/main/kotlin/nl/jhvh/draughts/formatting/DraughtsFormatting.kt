@@ -1,5 +1,3 @@
 package nl.jhvh.draughts.formatting
 
-interface DraughtsFormatting<out BoardElement, out Any> {
-
-}
+interface DraughtsFormatting<out BoardElement, out Any>

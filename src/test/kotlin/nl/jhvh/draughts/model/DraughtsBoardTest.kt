@@ -1,93 +1,68 @@
 package nl.jhvh.draughts.model
 
-import nl.jhvh.draughts.model.base.PlayableCoordinate
-import nl.jhvh.draughts.model.base.PlayerType.SECOND_PLAYER
-import nl.jhvh.draughts.model.base.PlayerType.STARTING_PLAYER
+import io.mockk.confirmVerified
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.spyk
+import io.mockk.verify
+import nl.jhvh.draughts.formatting.DraughtsFormatting
+import nl.jhvh.draughts.formatting.textformat.FormattableList
 import nl.jhvh.draughts.model.base.boardLength
 import nl.jhvh.draughts.model.base.boardWidth
-import nl.jhvh.draughts.model.base.maxPiecePositionNumber
-import nl.jhvh.draughts.model.base.piecesPerPlayer
-import nl.jhvh.draughts.model.base.positionRange
 import nl.jhvh.draughts.model.structure.Board
+import nl.jhvh.draughts.model.structure.Piece
+import nl.jhvh.draughts.model.structure.Square
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 /**
- * This is an integration test in the sense that it also tests some behaviour of the comprising [BoardElement]s
- * that are constructed and initialized on construction of the [DraughtsBoard], e.g. [DraughtsBoard.squares],
- * [DraughtsBoard.playableCoordinates], [DraughtsBoard.allPieces] etc.; these are not mocked
+ * Unit tests for [DraughtsBoard]
+ *
+ * Note that a lot of stuff is done when constructing / initializing the [DraughtsBoard].
+ * Tests covering construction and initialization are covered by a separate test [DraughtsBoardInitializationTest]
  */
 internal class DraughtsBoardTest {
 
     private val subject: Board = DraughtsBoard()
 
     @Test
-    fun getPlayableCoordinates() {
-        val coords = subject.playableCoordinates
-        assertThat(coords.map { it.position }).containsExactlyInAnyOrderElementsOf(positionRange)
-    }
+    fun `getPiece by Square argument`() {
+        // spy, because the call we are testing is redirected to another method in the subject (SUT)
+        val subjectSpyk: DraughtsBoard = spyk(subject as DraughtsBoard)
+        val allSquarePositions: Set<Pair<Int, Int>> = (0 until boardWidth)
+            .map { x -> (0 until boardLength).map { y -> Pair(x, y) } }
+            .flatten().toSet()
 
-    @Test
-    fun getSquares() {
-        val squares = subject.squares
-        val expectedXY: Set<Pair<Int, Int>> = (0 until boardWidth)
-            .map { x -> (0 until boardLength)
-                .map { y -> Pair(x, y) }}.flatten().toSet()
+        allSquarePositions.forEach { pair ->
+            // given
+            val squareMock: Square = mockk()
+            val pieceMock: Piece = mockk()
+            every { squareMock.xy }.returns(pair)
+            every { subjectSpyk.getPiece(pair) }.returns(pieceMock)
 
-        assertThat(squares.size).isEqualTo(boardWidth * boardLength)
-        assertThat(squares.keys).isEqualTo(expectedXY)
-
-        assertThat(squares.values.filter { it.squareType.playable }.size).isEqualTo(boardWidth * boardLength / 2)
-        assertThat(squares.values.filter { !it.squareType.playable }.size).isEqualTo(boardWidth * boardLength / 2)
-
-        squares.forEach {
-            val square = it.value
-            if (square.squareType.playable) {
-                PlayableCoordinate(it.key) // playable, so should be possible
-            }
-            assertThat(it.key).isEqualTo(square.xy)
-            assertThat(square.board).isSameAs(subject)
+            // when
+            val actual = subjectSpyk.getPiece(squareMock)
+            // then
+            verify { squareMock.xy }
+            confirmVerified(squareMock, pieceMock)
+            assertThat(actual).isEqualTo(pieceMock)
         }
     }
 
     @Test
-    fun getDarkPieces() {
-        val darkPieces = subject.darkPieces
-
-        assertThat(darkPieces.size).isEqualTo(piecesPerPlayer)
-        darkPieces.forEach { assertThat(it.playerType).isSameAs(SECOND_PLAYER) }
-        assertThat(darkPieces.map { it.initialCoordinate.position })
-            .containsExactlyInAnyOrderElementsOf(1..piecesPerPlayer)
-    }
-
-    @Test
-    fun getLightPieces() {
-        val lightPieces = subject.lightPieces
-        val expectedPositions = (maxPiecePositionNumber - piecesPerPlayer + 1) .. maxPiecePositionNumber
-
-        assertThat(lightPieces.size).isEqualTo(piecesPerPlayer)
-        lightPieces.forEach { assertThat(it.playerType).isSameAs(STARTING_PLAYER) }
-        assertThat(lightPieces.map { it.initialCoordinate.position })
-            .containsExactlyInAnyOrderElementsOf(expectedPositions)
-    }
-
-    @Test
-    fun getAllPieces() {
-        val pieces = subject.allPieces
-        assertThat(pieces.size).isEqualTo(piecesPerPlayer * 2)
-        assertThat(pieces).containsExactlyInAnyOrderElementsOf(subject.lightPieces + subject.darkPieces)
-    }
-
-    @Test
-    fun getBoard() {
-        assertThat(subject.board).isSameAs(subject)
-    }
-
-    @Test
-    @Disabled("test of DraughtsBoard.format(): to do")
     fun format() {
-        TODO("to do when implemented in SUT")
+        // given
+        val boardFormatterMock: DraughtsFormatting<Board, FormattableList> = mockk()
+        val expected: FormattableList = mockk()
+        every { boardFormatterMock.format(subject) }.returns(expected)
+
+        // when
+        val actual = subject.format(boardFormatterMock)
+
+        // then
+        verify { boardFormatterMock.format(subject) }
+        confirmVerified(boardFormatterMock)
+        assertThat(actual).isEqualTo(expected)
     }
 
 }

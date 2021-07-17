@@ -1,12 +1,12 @@
 package nl.jhvh.draughts.service
 
 import nl.jhvh.draughts.model.base.PlayableCoordinate
-import nl.jhvh.draughts.model.movement.base.Move
-import nl.jhvh.draughts.model.structure.Board
+import nl.jhvh.draughts.model.game.Game
+import nl.jhvh.draughts.model.game.move.Move
 
 interface DraughtsServable {
 
-    fun initBoard(): Board
+    fun initGame(): Game
 
     fun doMove(move: Move)
 

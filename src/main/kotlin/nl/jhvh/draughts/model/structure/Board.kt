@@ -14,4 +14,11 @@ interface Board: BoardElement {
     val darkPieces: Set<Piece>
 
     val allPieces: Set<Piece>
+
+    fun getPiece(square: Square): Piece?
+
+    fun getPiece(xy: Pair<Int, Int>): Piece?
+
+    fun getPiecesByXY(): Map<Pair<Int, Int>, Piece>
+
 }

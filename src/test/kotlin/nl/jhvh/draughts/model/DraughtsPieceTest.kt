@@ -26,6 +26,7 @@ internal class DraughtsPieceTest {
     @BeforeEach
     fun setUp() {
         clearMocks(boardMock, coordinateMock)
+        every { coordinateMock.position }.returns(28)
     }
 
     @Test

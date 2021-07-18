@@ -161,6 +161,7 @@ internal class DraughtsPieceMoveTest {
         val currentY = 1
         every { coordinateMock.x } returns currentX
         every { coordinateMock.y } returns currentY
+        every { coordinateMock.position }.returns(PlayableCoordinate(currentX, currentY).position)
         val movementOptionMock: PieceMovementOption = mockk()
 
         val subjectSpyk = spyk(DraughtsPiece(boardMock, coordinateMock, PlayerType.STARTING_PLAYER))
@@ -171,6 +172,7 @@ internal class DraughtsPieceMoveTest {
 
         // then
         verify { subjectSpyk.isCaptured }
+        verify { coordinateMock.position }
         confirmVerified(coordinateMock, movementOptionMock)
     }
 
@@ -416,6 +418,7 @@ internal class DraughtsPieceMoveTest {
         val currentY = 7
         every { coordinateMock.x } returns currentX
         every { coordinateMock.y } returns currentY
+        every { coordinateMock.position }.returns(PlayableCoordinate(currentX, currentY).position)
         val movementOptionMock: PieceMovementOption = mockk()
 
         val subjectSpyk = spyk(DraughtsPiece(boardMock, coordinateMock, PlayerType.STARTING_PLAYER))
@@ -428,6 +431,7 @@ internal class DraughtsPieceMoveTest {
         // then
         verify { subjectSpyk.addCapturingMoves(movementOptionMock) }
         verify { subjectSpyk.isCaptured }
+        verify { coordinateMock.position }
 
         confirmVerified(subjectSpyk, coordinateMock, movementOptionMock)
     }

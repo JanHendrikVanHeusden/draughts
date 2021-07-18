@@ -7,4 +7,9 @@ class PieceMove(
     override val from: PlayableCoordinate,
     override val to: PlayableCoordinate,
     override var capturing: Piece?
-) : Move, Capturing
+) : Move, Capturing {
+
+    override fun toString(): String {
+        return "${this.javaClass.simpleName}(from=$from, to=$to, capturing=$capturing)"
+    }
+}

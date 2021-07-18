@@ -4,6 +4,7 @@ import nl.jhvh.draughts.formatting.DraughtsFormatting
 import nl.jhvh.draughts.formatting.textformat.FormattableList
 import nl.jhvh.draughts.model.base.BoardElement
 import nl.jhvh.draughts.model.base.PlayableCoordinate
+import nl.jhvh.draughts.model.base.PlayerType
 import nl.jhvh.draughts.model.base.PlayerType.SECOND_PLAYER
 import nl.jhvh.draughts.model.base.PlayerType.STARTING_PLAYER
 import nl.jhvh.draughts.model.base.SquareType
@@ -23,15 +24,17 @@ internal class DraughtsBoard: Board {
 
     override val squares: Map<Pair<Int, Int>, Square> = initSquares()
 
-    override val lightPieces: Set<Piece> = positionRange.reversed().take(piecesPerPlayer)
+    val startingPlayerPieces: Set<Piece> = positionRange.reversed().take(piecesPerPlayer)
         .map { position -> DraughtsPiece(this, PlayableCoordinate(position), STARTING_PLAYER) }
         .toSet()
 
-    override val darkPieces: Set<Piece> = positionRange.take (piecesPerPlayer)
+    val secondPlayerPieces: Set<Piece> = positionRange.take (piecesPerPlayer)
         .map { position -> DraughtsPiece(this, PlayableCoordinate(position), SECOND_PLAYER) }
         .toSet()
 
-    override val allPieces: Set<Piece> = lightPieces + darkPieces
+    override val allPieces: Set<Piece> = startingPlayerPieces + secondPlayerPieces
+
+    override val allPiecesByPlayerType: Map<PlayerType, Set<Piece>> = mapOf(STARTING_PLAYER to startingPlayerPieces, SECOND_PLAYER to secondPlayerPieces)
 
     override val board: Board = this
 

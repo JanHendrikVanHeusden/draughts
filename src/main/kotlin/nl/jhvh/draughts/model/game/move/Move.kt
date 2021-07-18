@@ -7,4 +7,6 @@ interface Move: Capturing {
     val from: PlayableCoordinate
     val to: PlayableCoordinate
     override var capturing: Piece?
+
+    override fun toString(): String
 }

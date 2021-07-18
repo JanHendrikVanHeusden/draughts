@@ -6,6 +6,7 @@ import nl.jhvh.draughts.model.game.move.Capturing
 import nl.jhvh.draughts.model.game.move.PieceMove
 import nl.jhvh.draughts.model.game.move.PieceMovementChain
 import nl.jhvh.draughts.model.structure.Piece
+import java.util.Collections
 
 /**
  * A [MovementOption] indicates a possible move, from the [parent]'s [coordinate] to `this` [coordinate].
@@ -82,7 +83,7 @@ internal class PieceMovementOption(override val piece: DraughtsPiece, override v
                     optionFrom = this.parent as PieceMovementOption?
                 }
             }
-            chains.add(PieceMovementChain(this.piece, moves))
+            chains.add(PieceMovementChain(this.piece, Collections.unmodifiableList(moves)))
         }
         return chains
     }

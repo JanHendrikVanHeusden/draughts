@@ -4,6 +4,7 @@ import io.mockk.clearMocks
 import io.mockk.every
 import io.mockk.mockk
 import nl.jhvh.draughts.model.DraughtsPiece
+import nl.jhvh.draughts.model.base.PlayableCoordinate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -51,8 +52,10 @@ internal class PieceMovementOptionTest {
     fun toMovementChains() {
         // given, when
         val result = subject.toMovementChains()
+
         // then
         assertThat(result).hasSize(4)
+        result.forEach { assertThat(it.piece).isSameAs(pieceMock) }
 
         val sortedResult = result.sorted()
         assertThat(sortedResult.map { it.captureCount }.toList()).isEqualTo(listOf(3, 2, 1, 0))
@@ -98,6 +101,30 @@ internal class PieceMovementOptionTest {
     }
 
     @Test
+    fun `toMovementChains with no place to go gives chain with no moves`() {
+        // given
+        val pieceMock: DraughtsPiece = mockk()
+        every { pieceMock.canMoveTo(any()) }.returns(false)
+        val subject = PieceMovementOption(pieceMock, mockk())
+
+        // when
+        val chains = subject.toMovementChains()
+
+        // then
+        assertThat(chains).hasSize(1)
+        assertThat(chains[0].moves).isEmpty()
+        assertThat(chains[0].captureCount).isEqualTo(0)
+        assertThat(chains[0].piece).isSameAs(pieceMock)
+    }
+
+    @Test
+    fun `when toMovementChains is called on a non-root option an exception is thrown`() {
+        subject.toMovementChains() // OK
+        assertThat ((assertFails { primaryOption3.toMovementChains() }) is IllegalStateException).isTrue()
+        assertThat ((assertFails { secondaryOption2_1.toMovementChains() }) is IllegalStateException).isTrue()
+    }
+
+    @Test
     fun findLeafNodes() {
         // given
         val leafNodes: MutableSet<PieceMovementOption> = mutableSetOf()
@@ -109,10 +136,25 @@ internal class PieceMovementOptionTest {
     }
 
     @Test
-    fun `when toMovementChains is called on a non-root option an exception is thrown`() {
-        subject.toMovementChains() // OK
-        assertThat ((assertFails { primaryOption3.toMovementChains() }) is IllegalStateException).isTrue()
-        assertThat ((assertFails { secondaryOption2_1.toMovementChains() }) is IllegalStateException).isTrue()
+    fun `findLeafNodes with no place to go returns root option`() {
+        // given
+        val pieceMock: DraughtsPiece = mockk()
+        every { pieceMock.canMoveTo(any()) }.returns(false)
+        val coordinateMock: PlayableCoordinate = mockk()
+        val subject = PieceMovementOption(pieceMock, coordinateMock)
+
+        val leafNodes: MutableSet<PieceMovementOption> = mutableSetOf()
+
+        // when
+        subject.findLeafNodes(leafNodes)
+        // then
+        assertThat(leafNodes).hasSize(1)
+        val parentNode = leafNodes.toList().first()
+        assertThat(parentNode.parent).isNull()
+        assertThat(parentNode.piece).isSameAs(pieceMock)
+        assertThat(parentNode.coordinate).isSameAs(coordinateMock)
+        assertThat(parentNode.capturing).isNull()
+        assertThat(parentNode.followingOptions).isEmpty()
     }
 
     private fun resetMocks() {

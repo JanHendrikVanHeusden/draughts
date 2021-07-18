@@ -57,7 +57,7 @@ internal class DraughtsBoardInitializationTest {
 
     @Test
     fun getDarkPieces() {
-        val darkPieces = subject.darkPieces
+        val darkPieces = subject.allPiecesByPlayerType[SECOND_PLAYER]!!
 
         assertThat(darkPieces.size).isEqualTo(piecesPerPlayer)
         darkPieces.forEach { assertThat(it.playerType).isSameAs(SECOND_PLAYER) }
@@ -67,7 +67,7 @@ internal class DraughtsBoardInitializationTest {
 
     @Test
     fun getLightPieces() {
-        val lightPieces = subject.lightPieces
+        val lightPieces = subject.allPiecesByPlayerType[STARTING_PLAYER]!!
         val expectedPositions = (maxPiecePositionNumber - piecesPerPlayer + 1) .. maxPiecePositionNumber
 
         assertThat(lightPieces.size).isEqualTo(piecesPerPlayer)
@@ -80,7 +80,7 @@ internal class DraughtsBoardInitializationTest {
     fun getAllPieces() {
         val pieces = subject.allPieces
         assertThat(pieces.size).isEqualTo(piecesPerPlayer * 2)
-        assertThat(pieces).containsExactlyInAnyOrderElementsOf(subject.lightPieces + subject.darkPieces)
+        assertThat(pieces).containsExactlyInAnyOrderElementsOf(subject.allPiecesByPlayerType.values.flatten())
     }
 
     @Test

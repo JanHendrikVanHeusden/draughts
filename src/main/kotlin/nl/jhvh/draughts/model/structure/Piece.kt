@@ -21,17 +21,17 @@ interface Piece: BoardElement, Comparable<Piece> {
     fun move(chain: MovementChain)
 
     /**
-     * Determines all moves that are possible, regardless whether if and how many capturing.
-     * Note that not all moves may be allowed: draughts rules allow only these moves with the highest capturing count.
-     * @return the moves as determined
+     * Determines all moves that are possible for this [Piece], regardless whether if and how many capturing.
+     * Note that *not all of these moves may be allowed*: draughts rules allow only these moves with the highest capturing count.
+     * @return the collection of move chains as determined; in case of multi-capture moves, the chains contain all required jumps
      * @see [allowedMoves]
      */
     fun possibleMoves(): Collection<MovementChain>
 
     /**
-     * Determines all moves that are possible and have the highest possible capturing count,
+     * Determines all moves that are possible for this [Piece], and have the highest possible capturing count,
      * so these are allowed for international draughts
-     * @return the moves as determined
+     * @return the collection of move chains as determined; in case of multi-capture moves, the chains contain all required jumps
      */
     fun allowedMoves(): Collection<MovementChain>
 

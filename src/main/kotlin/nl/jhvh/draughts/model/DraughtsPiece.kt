@@ -41,8 +41,12 @@ internal class DraughtsPiece(
     override var isCrowned: Boolean = false
 
     override fun move(chain: MovementChain) {
-        // TODO: exception on captured
-        TODO("Not yet implemented")
+        check(chain.piece == this) { "A movement for piece=${chain.piece} can not be applied to this piece = $this" }
+        require(!isCaptured || chain.moves.isEmpty()) { "This piece was captured already, it cannot be moved! piece = $this" }
+        // move to new position
+        this.currentCoordinate = chain.moves.last().to
+        // capture the enemy's pieces
+        chain.moves.forEach{ it.capturing?.isCaptured = true }
     }
 
     override fun allowedMoves(): Collection<MovementChain> {
@@ -175,6 +179,6 @@ internal class DraughtsPiece(
     override fun compareTo(other: Piece) = this.initialCoordinate.position
 
     override fun toString(): String =
-        "${this.javaClass.simpleName}(initialCoordinate=$initialCoordinate, playerType=$playerType, currentCoordinate=$currentCoordinate, isCaptured=$isCaptured, isCrowned=$isCrowned)"
+        "${this.javaClass.simpleName}(current position=$currentCoordinate, playerType=$playerType, isCaptured=$isCaptured, isCrowned=$isCrowned)"
 
 }

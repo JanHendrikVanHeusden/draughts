@@ -21,7 +21,7 @@ In the target directory, you will find 2 .jar-files:
 
 You need the latter one (the `...-jar-with-dependencies.jar`).
 
-#### Build it
+#### Run it
 You can then run it from the command line like this:
 > ``java -cp "< path to jar file > \draughts\target\draughts-1.0-SNAPSHOT-jar-with-dependencies.jar" nl.jhvh.draughts.player.Player``
 

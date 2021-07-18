@@ -3,6 +3,7 @@ package nl.jhvh.draughts.formatting.textformat
 import nl.jhvh.draughts.concatAlignRight
 import nl.jhvh.draughts.concatEach
 import nl.jhvh.draughts.formatting.DraughtsFormatting
+import nl.jhvh.draughts.isOdd
 import nl.jhvh.draughts.model.base.boardLength
 import nl.jhvh.draughts.model.base.piecesPerRow
 import nl.jhvh.draughts.model.structure.Board
@@ -57,14 +58,14 @@ class BoardTextFormatter(val squareFormatter: SquareTextFormatter) :
         val rightPositions: MutableList<String> = mutableListOf()
         (0 until boardLength).forEach { y ->
             val leftMostPos = y * piecesPerRow + 1
-            leftPositions.add("$leftMostPos .. ")
+            leftPositions.add("$leftMostPos ..${if (y.isOdd()) "  " else ""}")
             leftPositions.add("")
             val rightMostPos = y * piecesPerRow + piecesPerRow
-            rightPositions.add("$rightMostPos  ")
+            rightPositions.add("$rightMostPos ${if (y.isOdd()) "  " else ""}")
             rightPositions.add("")
         }
         val indices = leftPositions.concatAlignRight(rightPositions)
-        result.forEachIndexed { i, str ->
+        result.forEachIndexed { i, _ ->
             result[i] = indices[i] + result[i]
         }
     }
@@ -74,11 +75,10 @@ class BoardTextFormatter(val squareFormatter: SquareTextFormatter) :
 // Uncomment to test formatting!
 //fun main() {
 //    val board = DraughtsBoard()
-//    val pieces = board.getPiecesByXY()
 //
 //    val pieceFormatter = PieceTextFormatter()
-//    val squareFormatter = SquareTextFormatter(pieceFormatter, pieces)
+//    val squareFormatter = SquareTextFormatter(pieceFormatter)
 //    val boardFormatter = BoardTextFormatter(squareFormatter)
 //
-//    userLog(boardFormatter.format(board))
+//    userInfo(boardFormatter.format(board))
 //}

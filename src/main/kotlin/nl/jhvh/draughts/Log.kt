@@ -64,19 +64,19 @@ internal inline fun <reified T : Any> T.checkAndLog(condition: Boolean, logLevel
     }
 }
 
-internal fun userLog() {
+internal fun userInfo() {
     println(System.lineSeparator())
 }
 
-internal fun userLog(text: String) {
+internal fun userInfo(text: String) {
     println(text)
 }
 
-internal fun userLog(objectToLog: Any?) {
-    userLog(objectToLog?.toString() ?: "null")
+internal fun userInfo(objectToLog: Any?) {
+    userInfo(objectToLog?.toString() ?: "null")
 }
 
-internal inline fun <reified T : Any> T.userLog(toLog: () -> Any?) {
+internal inline fun <reified T : Any> T.userInfo(toLog: () -> Any?) {
     try {
         println(toLog())
     } catch (e: Exception) {

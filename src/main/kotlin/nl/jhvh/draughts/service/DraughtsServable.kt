@@ -7,7 +7,7 @@ interface DraughtsServable {
 
     fun newGame(): Game
 
-    fun doMove(game: Game, move: List<Int>)
+    fun doMove(game: Game, move: List<Int>): Boolean
 
     fun playerInTurn(game: Game): PlayerType
 

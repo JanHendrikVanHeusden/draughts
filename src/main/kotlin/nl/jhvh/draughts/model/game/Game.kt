@@ -31,6 +31,6 @@ interface Game: Board {
     /** Carries out a move of the current player */
     fun move(movement: MovementChain)
 
-    fun move(piece: Piece, move: List<Int>)
+    fun move(piece: Piece, move: List<Int>): Boolean
 
 }

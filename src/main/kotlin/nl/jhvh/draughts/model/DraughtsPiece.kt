@@ -9,6 +9,7 @@ import nl.jhvh.draughts.model.game.move.MovementChain
 import nl.jhvh.draughts.model.game.move.options.PieceMovementOption
 import nl.jhvh.draughts.model.structure.Board
 import nl.jhvh.draughts.model.structure.Piece
+import nl.jhvh.draughts.userInfo
 
 internal class DraughtsPiece(
     override val board: Board,
@@ -18,7 +19,7 @@ internal class DraughtsPiece(
 
     override var currentCoordinate: PlayableCoordinate? = initialCoordinate
         set(value) {
-            if (value === field) {
+            if (value == field) {
                 return
             }
             check(value != null || isCaptured) { """Can set the current coordinate to null only if piece was captured, but it wasn't captured! (piece: "$field")""" }
@@ -32,6 +33,9 @@ internal class DraughtsPiece(
                 return
             }
             check(!(field && !value)) { """Piece "$this" is captured already, can not be uncaptured""" }
+            if (value && !field) {
+                userInfo("Piece on position ${this.currentCoordinate!!.position} (${this.playerType.color}) is captured")
+            }
             field = value
             if (value) {
                 this.currentCoordinate = null

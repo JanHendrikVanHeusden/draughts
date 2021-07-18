@@ -55,6 +55,9 @@ or not-allowed moves.
 * Simple representation (by letter-like symbols) of the board with pieces
 * A service providing the required external facade
 * A `Player` main class which can be run from the command line
+* Unit tests for some of the classes (code coverage ~58%)
+   * mainly for the basics of piece movement, capturing etc.,
+     as I wanted to properly verify these before building more upon it
 
 #### What's NOT in it
 * The game never ends, and no winner (or draw) will be declared

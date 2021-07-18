@@ -2,8 +2,9 @@
 Draughts board game (aka checkers).
 
 The code implements the "*International draughts*" variant (Dutch: "*dammen*"), so with a 10 by 10 checkered board.
-> All values in the code, like board sizes, number of pieces, positions etc. are set by constants.
-> No tests are provided or promises given on the proper functioning of the code when these values are changed.
+> All values in the code, like board sizes, number of pieces, positions etc. are set by constants, so these could be
+> changed easily.
+> However, no tests are provided or promises given on the proper functioning of the code when these values are changed.
 
 ### Notation
 According to draughts conventions for the common "*International draughts*" variant,

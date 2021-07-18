@@ -20,7 +20,9 @@ fun input(): String {
 
 private fun welcome(): Boolean {
     userInfo()
+    userInfo("*********************************************************************************************")
     userInfo("Welcome to Jan-Hendrik's draught game! Press N + [Enter] to quit, or just [Enter] to continue")
+    userInfo("*********************************************************************************************")
     val quit = input().uppercase().equals("N")
     if (quit) {
         userInfo("Thanks for now! Maybe another time again!")
@@ -41,18 +43,26 @@ private fun explanation() {
     userInfo()
 }
 
-private val whitespaceRegex: Regex = Regex("""\s+""")
-
 fun inputNumbers(): List<Int> {
     try {
-        return input().split(whitespaceRegex).map { it.toInt() }
+        var input = input().trim()
+        // When running jar file, java cannot find the Kotlin Regex class...
+        // too bad... Just remove all duplicate spaces and tabs in these weird loops...
+        while (input.contains("  ")) {
+            input = input.replace("  ", " ")
+        }
+        while (input.contains("\t")) {
+            input = input.replace("\t", " ")
+        }
+        return input.split(" ").map { it.toInt() }
+
     } catch (e: NumberFormatException) {
         userInfo("Please enter numbers only, divided by spaces!")
         return inputNumbers()
     }
 }
 
-fun main() {
+fun playDraughts() {
     if (!welcome()) {
         return
     }
@@ -72,6 +82,16 @@ fun main() {
             userInfo("Try again!")
         } else {
             displayBoard(game, boardFormatter)
+        }
+    }
+}
+
+// to run it from command line (jar file)
+class Player {
+    companion object {
+        @JvmStatic
+        fun main(vararg args: String) {
+            playDraughts()
         }
     }
 }

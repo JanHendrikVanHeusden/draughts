@@ -1,15 +1,14 @@
 package nl.jhvh.draughts.service
 
-import nl.jhvh.draughts.model.base.PlayableCoordinate
+import nl.jhvh.draughts.model.base.PlayerType
 import nl.jhvh.draughts.model.game.Game
-import nl.jhvh.draughts.model.game.move.Move
 
 interface DraughtsServable {
 
-    fun initGame(): Game
+    fun newGame(): Game
 
-    fun doMove(move: Move)
+    fun doMove(game: Game, move: List<Int>)
 
-    fun allowedMoves(position: PlayableCoordinate): Collection<Move>
+    fun playerInTurn(game: Game): PlayerType
 
 }

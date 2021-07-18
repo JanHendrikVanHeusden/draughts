@@ -2,8 +2,10 @@ package nl.jhvh.draughts.model.game
 
 import nl.jhvh.draughts.model.base.PlayerType
 import nl.jhvh.draughts.model.game.move.MovementChain
+import nl.jhvh.draughts.model.structure.Board
+import nl.jhvh.draughts.model.structure.Piece
 
-interface Game {
+interface Game: Board {
 
     /** @return the current [PlayerType] in turn */
     fun playerTypeInTurn(): PlayerType
@@ -28,5 +30,7 @@ interface Game {
 
     /** Carries out a move of the current player */
     fun move(movement: MovementChain)
+
+    fun move(piece: Piece, move: List<Int>)
 
 }

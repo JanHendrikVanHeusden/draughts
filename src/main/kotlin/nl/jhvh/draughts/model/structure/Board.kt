@@ -14,6 +14,8 @@ interface Board: BoardElement {
 
     val allPiecesByPlayerType: Map<PlayerType, Set<Piece>>
 
+    fun getPiece(position: Int): Piece?
+
     fun getPiece(square: Square): Piece?
 
     fun getPiece(xy: Pair<Int, Int>): Piece?

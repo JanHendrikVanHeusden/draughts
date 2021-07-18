@@ -48,6 +48,8 @@ internal class DraughtsBoard: Board {
             .toMap()
     }
 
+    override fun getPiece(position: Int): Piece? = getPiece(PlayableCoordinate(position).xy)
+
     override fun getPiece(square: Square): Piece? = getPiece(square.xy)
 
     override fun getPiece(xy: Pair<Int, Int>): Piece? = getPiecesByXY()[xy]

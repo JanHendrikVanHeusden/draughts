@@ -3,7 +3,7 @@ package nl.jhvh.draughts.model.structure
 import nl.jhvh.draughts.model.base.BoardElement
 import nl.jhvh.draughts.model.base.PlayableCoordinate
 import nl.jhvh.draughts.model.base.PlayerType
-import nl.jhvh.draughts.model.game.move.PieceMovementChain
+import nl.jhvh.draughts.model.game.move.MovementChain
 
 interface Piece: BoardElement, Comparable<Piece> {
 
@@ -18,7 +18,7 @@ interface Piece: BoardElement, Comparable<Piece> {
 
     var isCrowned: Boolean
 
-    fun move(chain: PieceMovementChain)
+    fun move(chain: MovementChain)
 
     /**
      * Determines all moves that are possible, regardless whether if and how many capturing.
@@ -26,14 +26,14 @@ interface Piece: BoardElement, Comparable<Piece> {
      * @return the moves as determined
      * @see [allowedMoves]
      */
-    fun possibleMoves(): Collection<PieceMovementChain>
+    fun possibleMoves(): Collection<MovementChain>
 
     /**
      * Determines all moves that are possible and have the highest possible capturing count,
      * so these are allowed for international draughts
      * @return the moves as determined
      */
-    fun allowedMoves(): Collection<PieceMovementChain>
+    fun allowedMoves(): Collection<MovementChain>
 
     override fun equals(other: Any?): Boolean
 

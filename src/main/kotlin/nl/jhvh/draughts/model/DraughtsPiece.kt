@@ -5,7 +5,7 @@ import nl.jhvh.draughts.formatting.textformat.FormattableList
 import nl.jhvh.draughts.model.base.BoardElement
 import nl.jhvh.draughts.model.base.PlayableCoordinate
 import nl.jhvh.draughts.model.base.PlayerType
-import nl.jhvh.draughts.model.game.move.PieceMovementChain
+import nl.jhvh.draughts.model.game.move.MovementChain
 import nl.jhvh.draughts.model.game.move.options.PieceMovementOption
 import nl.jhvh.draughts.model.structure.Board
 import nl.jhvh.draughts.model.structure.Piece
@@ -18,13 +18,20 @@ internal class DraughtsPiece(
 
     override var currentCoordinate: PlayableCoordinate? = initialCoordinate
         set(value) {
+            if (value === field) {
+                return
+            }
             check(value != null || isCaptured) { """Can set the current coordinate to null only if piece was captured, but it wasn't captured! (piece: "$field")""" }
-            check(!(field == null && value != null)) { """Piece "this" is captured already, can not be moved to $value""" }
+            check(!(field == null && value != null)) { """Piece "$this" is captured already, can not be moved to $value""" }
             field = value
         }
 
     override var isCaptured: Boolean = false
         set(value) {
+            if (value == field) {
+                return
+            }
+            check(!(field && !value)) { """Piece "$this" is captured already, can not be uncaptured""" }
             field = value
             if (value) {
                 this.currentCoordinate = null
@@ -33,37 +40,41 @@ internal class DraughtsPiece(
 
     override var isCrowned: Boolean = false
 
-    override fun move(chain: PieceMovementChain) {
+    override fun move(chain: MovementChain) {
         // TODO: exception on captured
         TODO("Not yet implemented")
     }
 
-    override fun allowedMoves(): Collection<PieceMovementChain> {
+    override fun allowedMoves(): Collection<MovementChain> {
         if (isCaptured) {
             return emptyList()
         }
-        TODO("Not yet implemented")
-        return possibleMoves()
+        val possibleMoves = possibleMoves()
+        val maxCaptureCount = possibleMoves.maxOf { it.captureCount }
+        return possibleMoves.filter { it.captureCount == maxCaptureCount }
     }
 
-    override fun possibleMoves(): Collection<PieceMovementChain> {
+    override fun possibleMoves(): Collection<MovementChain> {
         if (isCaptured) {
             return emptyList()
         }
-        with(PieceMovementOption(currentCoordinate!!)) {
+        with(PieceMovementOption(this, currentCoordinate!!)) {
             addCapturingMoves(this)
-            addCapturingKingMoves(this) // does nothing yet!
+            addCapturingCrownedMoves(this) // does nothing yet!
             addNonCapturingMoves(this)
-            addNonCapturingKingMoves(this) // does nothing yet!
+            addNonCapturingCrownedMoves(this) // does nothing yet!
+
+            return this.toMovementChains()
         }
-        TODO("Not implemented yet")
     }
 
-    fun addNonCapturingKingMoves(parentMove: PieceMovementOption) {
+    @Suppress("UNUSED_PARAMETER")
+    fun addNonCapturingCrownedMoves(parentMove: PieceMovementOption) {
         // TODO: Not implemented yet
     }
 
-    fun addCapturingKingMoves(parentMove: PieceMovementOption) {
+    @Suppress("UNUSED_PARAMETER")
+    fun addCapturingCrownedMoves(parentMove: PieceMovementOption) {
         // TODO: Not implemented yet
     }
 
@@ -76,8 +87,7 @@ internal class DraughtsPiece(
 
         val handleMove: (Pair<Int, Int>) -> Unit = { destination ->
             if (canMoveTo(destination)) {
-                val newMove = PieceMovementOption(PlayableCoordinate(destination), parent = parentMove)
-                parentMove.followingOptions.add(newMove)
+                PieceMovementOption(this, PlayableCoordinate(destination), parent = parentMove)
             }
         }
 
@@ -98,7 +108,7 @@ internal class DraughtsPiece(
                 val enemyPiece = enemyPiece(capturePos)
                 if (enemyPiece != null) {
                     // Avoid cycles! According to draughts rules, you can not jump the same piece twice
-                    // That's nice, programmers don't like endless loops either ;-)
+                    // That's nice: programmers don't like endless loops either ;-)
                     var parent: PieceMovementOption? = parentMove
                     var alreadyCaptured = false
                     do {
@@ -109,9 +119,10 @@ internal class DraughtsPiece(
                         parent = parent.parent as PieceMovementOption?
                     } while (parent != null)
                     if (!alreadyCaptured) {
-                        val newMove = PieceMovementOption(PlayableCoordinate(destination), parent = parentMove)
-                        parentMove.followingOptions.add(newMove)
+                        val newMove = PieceMovementOption(this, PlayableCoordinate(destination), parent = parentMove)
                         newMove.capturing = enemyPiece
+                        // recursive call to handle any subsequent captures
+                        addCapturingMoves(newMove)
                     }
                 }
             }
@@ -138,10 +149,10 @@ internal class DraughtsPiece(
         handlePossibleCapture(rightBackMoveTo, rightBackCapturePos)
     }
 
-    private fun canMoveTo(xy: Pair<Int, Int>): Boolean =
+    fun canMoveTo(xy: Pair<Int, Int>): Boolean =
         this.board.squares[xy] != null && this.board.getPiecesByXY()[xy] == null
 
-    private fun enemyPiece(xy: Pair<Int, Int>): Piece? {
+    fun enemyPiece(xy: Pair<Int, Int>): Piece? {
         if (this.board.squares[xy] == null) {
             return null
         }

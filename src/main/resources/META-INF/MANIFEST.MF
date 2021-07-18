@@ -1,0 +1,2 @@
+Manifest-Version: 1.0
+Package: nl.jhvh.draughts.player

@@ -7,6 +7,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import nl.jhvh.draughts.formatting.DraughtsFormatting
 import nl.jhvh.draughts.formatting.textformat.FormattableList
+import nl.jhvh.draughts.model.base.BoardElement
 import nl.jhvh.draughts.model.base.PlayableCoordinate
 import nl.jhvh.draughts.model.base.PlayerType
 import nl.jhvh.draughts.model.structure.Board
@@ -161,7 +162,8 @@ internal class DraughtsPieceTest {
         every { pieceFormatterMock.format(subject) }.returns(expected)
 
         // when
-        val actual = subject.format(pieceFormatterMock)
+        @Suppress("UNCHECKED_CAST")
+        val actual = subject.format(pieceFormatterMock as DraughtsFormatting<BoardElement, FormattableList>)
 
         // then
         verify { pieceFormatterMock.format(subject) }

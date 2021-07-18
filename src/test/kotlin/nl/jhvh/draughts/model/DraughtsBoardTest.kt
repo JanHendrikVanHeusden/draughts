@@ -7,6 +7,7 @@ import io.mockk.spyk
 import io.mockk.verify
 import nl.jhvh.draughts.formatting.DraughtsFormatting
 import nl.jhvh.draughts.formatting.textformat.FormattableList
+import nl.jhvh.draughts.model.base.BoardElement
 import nl.jhvh.draughts.model.base.boardLength
 import nl.jhvh.draughts.model.base.boardWidth
 import nl.jhvh.draughts.model.structure.Board
@@ -57,7 +58,8 @@ internal class DraughtsBoardTest {
         every { boardFormatterMock.format(subject) }.returns(expected)
 
         // when
-        val actual = subject.format(boardFormatterMock)
+        @Suppress("UNCHECKED_CAST")
+        val actual = subject.format(boardFormatterMock as DraughtsFormatting<BoardElement, FormattableList>)
 
         // then
         verify { boardFormatterMock.format(subject) }

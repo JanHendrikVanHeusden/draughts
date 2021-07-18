@@ -73,14 +73,14 @@ internal fun userLog(text: String) {
 }
 
 internal fun userLog(objectToLog: Any?) {
-    println { objectToLog?.toString() ?: "null" }
+    userLog(objectToLog?.toString() ?: "null")
 }
 
-internal inline fun <reified T : Any> T.userLog(text: () -> String) {
+internal inline fun <reified T : Any> T.userLog(toLog: () -> Any?) {
     try {
-        println(text())
+        println(toLog())
     } catch (e: Exception) {
-        val logger= log4J2Logger(T::class.java.name)
+        val logger = log4J2Logger(T::class.java.name)
         logger.log().error(e.message)
     }
 }

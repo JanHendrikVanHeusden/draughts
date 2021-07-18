@@ -1,6 +1,6 @@
-package nl.jhvh.draughts.formatting
+package nl.jhvh.draughts.formatting.textformat
 
-import nl.jhvh.draughts.formatting.textformat.FormattableList
+import nl.jhvh.draughts.formatting.DraughtsFormatting
 import nl.jhvh.draughts.model.base.BoardElement
 
 

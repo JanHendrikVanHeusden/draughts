@@ -54,6 +54,8 @@ internal class DraughtsBoard: Board {
 
     override fun getPiece(xy: Pair<Int, Int>): Piece? = getPiecesByXY()[xy]
 
+    // FIXME: called quite often! map should be an instance variable that is re-determined on piece events only
+    //        (move, capture) instead of at every call (could use "by Delegates.observable")
     override fun getPiecesByXY(): Map<Pair<Int, Int>, Piece> = allPieces.filter { !it.isCaptured }
         .map {it.currentCoordinate!!.xy to it}
         .toMap()

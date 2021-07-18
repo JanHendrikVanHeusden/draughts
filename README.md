@@ -68,8 +68,10 @@ or not-allowed moves.
 * TODO's / FIXME's
    * Especially the very inefficient way of retrieving piece information for each square
 * Let players specify names, so it can say *It's John's turn* instead of *black is in turn*
+* Undo / redo
 
 Well, and maybe nice but time-consuming stuff
+* Saving / re-loading an ongoing game
 * Web interface with REST communication
 * Nice frontend
 * Build it directly in web (maybe php?)

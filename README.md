@@ -44,7 +44,42 @@ This draughts game uses these position numbers to specify moves.
 The game is self explanatory; you get helpful feedback on how to play, and also when doing things like impossible
 or not-allowed moves.
 
-### Language
+### Features
+#### What's in it
+* Moving "normal" (uncrowned) pieces, according to draughts rules
+* Toggle turns (white - black - white - black etc.)
+* Jumps (captures), including multi-jump and backward jump
+   * Including prevention of endless loops in circular jumps
+* Enforcement of the rule that you must play the piece with the highest capture count
+   * Including display of which moves *are* allowed, in case of an illegal move
+* Simple representation (by letter-like symbols) of the board with pieces
+* A service providing the required external facade
+* A `Player` main class which can be run from the command line
+* Unit tests for some of the classes (code coverage ~58%)
+   * mainly for the basics of piece movement, capturing etc.,
+     as I wanted to properly verify these before building more upon it
+
+#### What's NOT in it
+* The game never ends, and no winner (or draw) will be declared
+   * There is no detection implemented (yet) of a player reaching the point where no more moves are possible,
+     nor  detection that a player has no more pieces.
+* Crowning of pieces reaching the opposite side of the board is not implemented; neither an algorithm to determine
+  the possible moves of a crowned piece.
+  
+#### Suggestions / wishes
+* Missing features (win / draw; crowned pieces)
+* TODO's / FIXME's
+   * Especially the very inefficient way of retrieving piece information for each square
+* Let players specify names, so it can say *It's John's turn* instead of *black is in turn*
+* Undo / redo
+
+Well, and maybe nice but time-consuming stuff
+* Saving / re-loading an ongoing game
+* Web interface with REST communication
+* Nice frontend
+* Build it directly in web (maybe php?)
+
+### Language: English
 Both the code names (variables, classes etc.) and all informative feedback from the game are in English.
 These feedback strings (prompts, messages, errors etc.) are hard coded (String literals) directly within the code.
 The time available for this code challenge was short, so I decided to hard code these to save time.

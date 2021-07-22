@@ -1,6 +1,5 @@
 package nl.jhvh.draughts.model.game.move.options
 
-import nl.jhvh.draughts.model.DraughtsPiece
 import nl.jhvh.draughts.model.base.PlayableCoordinate
 import nl.jhvh.draughts.model.game.move.Capturing
 import nl.jhvh.draughts.model.game.move.PieceMove
@@ -52,7 +51,7 @@ internal sealed interface MovementOption: Capturing {
 }
 
 /** @see [MovementOption] */
-internal class PieceMovementOption(override val piece: DraughtsPiece, override val coordinate: PlayableCoordinate, override val parent: MovementOption? = null
+internal class PieceMovementOption(override val piece: Piece, override val coordinate: PlayableCoordinate, override val parent: MovementOption? = null
 ) : MovementOption {
 
     override val followingOptions: MutableList<PieceMovementOption> = mutableListOf()
@@ -90,9 +89,11 @@ internal class PieceMovementOption(override val piece: DraughtsPiece, override v
 
     fun findLeafNodes(leavesList: MutableSet<PieceMovementOption>) {
         if (this.followingOptions.isEmpty()) {
+            // It's a leaf node, add to output
             val isAdded = leavesList.add(this)
-            check(isAdded) {"Error! Cycle in movement tree, this is a bug (but might happens in mocked test code)"}
+            check(isAdded) {"Error! Cycle in movement tree, this is a bug (but might happen in mocked test code)"}
         } else {
+            // Not a leaf node, call recursively to search deeper
             followingOptions.forEach { nonLeafNode ->
                 nonLeafNode.findLeafNodes(leavesList)
             }

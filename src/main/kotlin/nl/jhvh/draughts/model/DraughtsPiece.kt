@@ -67,94 +67,117 @@ internal class DraughtsPiece(
             return emptyList()
         }
         with(PieceMovementOption(this, currentCoordinate!!)) {
-            addCapturingMoves(this)
-            addCapturingCrownedMoves(this) // does nothing yet!
-            addNonCapturingMoves(this)
-            addNonCapturingCrownedMoves(this) // does nothing yet!
-
+                addCapturingMoves(this) // does nothing yet!
+                addNonCapturingMoves(this) // does nothing yet!
             return this.toMovementChains()
         }
     }
 
-    @Suppress("UNUSED_PARAMETER")
-    fun addNonCapturingCrownedMoves(parentMove: PieceMovementOption) {
-        // TODO: Not implemented yet
+    private val relativeLeftForward: (moveFrom: Pair<Int, Int>, length: Int) -> Pair<Int, Int> = { moveFrom, length ->
+        if (this.playerType.hasFirstTurn) Pair(moveFrom.first - length, moveFrom.second + length)
+        else Pair(moveFrom.first + length, moveFrom.second - length)
     }
 
-    @Suppress("UNUSED_PARAMETER")
-    fun addCapturingCrownedMoves(parentMove: PieceMovementOption) {
-        // TODO: Not implemented yet
+    private val relativeRightForward: (moveFrom: Pair<Int, Int>, length: Int) -> Pair<Int, Int> = { moveFrom, length ->
+        if (this.playerType.hasFirstTurn) Pair(moveFrom.first + length, moveFrom.second + length)
+        else Pair(moveFrom.first - length, moveFrom.second - length)
     }
+
+    private val relativeLeftBackward: (moveFrom: Pair<Int, Int>, length: Int) -> Pair<Int, Int> = { moveFrom, length ->
+        if (this.playerType.hasFirstTurn) Pair(moveFrom.first - length, moveFrom.second - length)
+        else Pair(moveFrom.first + length, moveFrom.second + length)
+    }
+
+    private val relativeRightBackward: (moveFrom: Pair<Int, Int>, length: Int) -> Pair<Int, Int> = { moveFrom, length ->
+        if (this.playerType.hasFirstTurn) Pair(moveFrom.first + length, moveFrom.second - length)
+        else Pair(moveFrom.first - length, moveFrom.second + length)
+    }
+
+    val relativeForwards = listOf(relativeLeftForward, relativeRightForward)
+    val relativeBackwards = listOf(relativeLeftBackward, relativeRightBackward)
+    val relativeMoves = relativeForwards + relativeBackwards
 
     fun addNonCapturingMoves(parentMove: PieceMovementOption) {
-        if (isCaptured) {
-            return
-        }
-        val currentX = parentMove.coordinate.x
-        val currentY = parentMove.coordinate.y
-
-        val handleMove: (Pair<Int, Int>) -> Unit = { destination ->
-            if (canMoveTo(destination)) {
-                PieceMovementOption(this, PlayableCoordinate(destination), parent = parentMove)
-            }
-        }
-
-        // playerType.hasFirstTurn -> "white" player
-        val leftMoveTo = if (this.playerType.hasFirstTurn) Pair(currentX - 1, currentY + 1) else Pair(currentX + 1, currentY - 1)
-        handleMove(leftMoveTo)
-        val rightMoveTo = if (this.playerType.hasFirstTurn) Pair(currentX + 1, currentY + 1) else Pair(currentX - 1, currentY - 1)
-        handleMove(rightMoveTo)
+        if (isCrowned) addNonCapturingCrownedMoves(parentMove)
+        else addNonCapturingNonCrownedMoves(parentMove)
     }
 
     fun addCapturingMoves(parentMove: PieceMovementOption) {
-        if (isCaptured) {
-            return
-        }
+        if (isCrowned) addCapturingCrownedMoves(parentMove)
+        else addCapturingNonCrownedMoves(parentMove)
+    }
 
-        val handlePossibleCapture: (Pair<Int, Int>, Pair<Int, Int>) -> Unit = { destination, capturePos ->
-            if (canMoveTo(destination)) {
-                val enemyPiece = enemyPiece(capturePos)
-                if (enemyPiece != null) {
-                    // Avoid cycles! According to draughts rules, you can not jump the same piece twice
-                    // That's nice: programmers don't like endless loops either ;-)
-                    var parent: PieceMovementOption? = parentMove
-                    var alreadyCaptured = false
-                    do {
-                        if (parent!!.capturing == enemyPiece) {
-                            alreadyCaptured = true
-                            break
-                        }
-                        parent = parent.parent as PieceMovementOption?
-                    } while (parent != null)
-                    if (!alreadyCaptured) {
-                        val newMove = PieceMovementOption(this, PlayableCoordinate(destination), parent = parentMove)
-                        newMove.capturing = enemyPiece
-                        // recursive call to handle any subsequent captures
-                        addCapturingMoves(newMove)
+    fun addNonCapturingNonCrownedMoves(parentMove: PieceMovementOption) {
+        if (isCaptured) return
+        else
+            relativeForwards.forEach { relMove ->
+                addNonCapturingOption(parentMove, relMove(parentMove.coordinate.xy, 1))
+            }
+    }
+
+    fun addCapturingNonCrownedMoves(parentMove: PieceMovementOption) {
+        if (isCaptured) return
+        else
+            relativeMoves.forEach { relMove ->
+                addCapturingOption(parentMove, destination = relMove(parentMove.coordinate.xy, 2), capturePos = relMove(parentMove.coordinate.xy, 1))
+            }
+    }
+
+    fun addNonCapturingCrownedMoves(parentMove: PieceMovementOption) {
+        if (isCaptured) return
+        else
+            relativeMoves.forEach { relMove ->
+                var length = 1
+                while (addNonCapturingOption(parentMove, relMove(parentMove.coordinate.xy, length))) {
+                    length++
+                }
+            }
+    }
+
+    fun addCapturingCrownedMoves(parentMove: PieceMovementOption) {
+        if (isCaptured) return
+        else
+            relativeMoves.forEach { relMove ->
+                var length = 1
+                while (canMoveTo(relMove(parentMove.coordinate.xy, length))) {
+                    length++
+                }
+                val capturePos = relMove(parentMove.coordinate.xy, length)
+                if (enemyPiece(capturePos) != null) {
+                    while (addCapturingOption(parentMove, relMove(parentMove.coordinate.xy, length+1), capturePos) != null) {
+                        length++
                     }
                 }
             }
+    }
+
+    fun addNonCapturingOption(parentMove: PieceMovementOption, destination: Pair<Int, Int>): Boolean {
+        if (canMoveTo(destination)) {
+            PieceMovementOption(this, PlayableCoordinate(destination), parent = parentMove)
+            return true
         }
+        return false
+    }
 
-        val currentX = parentMove.coordinate.x
-        val currentY = parentMove.coordinate.y
-
-        // playerType.hasFirstTurn -> "white" player
-        val leftForwardMoveTo = if (this.playerType.hasFirstTurn) Pair(currentX - 2, currentY + 2) else Pair(currentX + 2, currentY - 2)
-        val leftForwardCapturePos = if (this.playerType.hasFirstTurn) Pair(currentX - 1, currentY + 1) else Pair(currentX + 1, currentY - 1)
-        handlePossibleCapture(leftForwardMoveTo, leftForwardCapturePos)
-
-        val rightForwardMoveTo = if (this.playerType.hasFirstTurn) Pair(currentX + 2, currentY + 2) else Pair(currentX - 2, currentY - 2)
-        val rightForwardCapturePos = if (this.playerType.hasFirstTurn) Pair(currentX + 1, currentY + 1) else Pair(currentX - 1, currentY - 1)
-        handlePossibleCapture(rightForwardMoveTo, rightForwardCapturePos)
-
-        val leftBackMoveTo = if (this.playerType.hasFirstTurn) Pair(currentX - 2, currentY - 2) else Pair(currentX + 2, currentY + 2)
-        val leftBackCapturePos = if (this.playerType.hasFirstTurn) Pair(currentX - 1, currentY - 1) else Pair(currentX + 1, currentY + 1)
-        handlePossibleCapture(leftBackMoveTo, leftBackCapturePos)
-
-        val rightBackMoveTo = if (this.playerType.hasFirstTurn) Pair(currentX + 2, currentY - 2) else Pair(currentX - 2, currentY + 2)
-        val rightBackCapturePos = if (this.playerType.hasFirstTurn) Pair(currentX + 1, currentY - 1) else Pair(currentX - 1, currentY + 1)
-        handlePossibleCapture(rightBackMoveTo, rightBackCapturePos)
+    fun addCapturingOption(parentMove: PieceMovementOption, destination: Pair<Int, Int>, capturePos: Pair<Int, Int>): Piece? {
+        if (!canMoveTo(destination)) {
+            return null
+        }
+        val enemyPiece = enemyPiece(capturePos) ?: return null
+        // Avoid cycles! According to draughts rules, you can not jump the same piece twice
+        // That's nice: programmers don't like endless loops either ;-)
+        var parent: PieceMovementOption? = parentMove
+        do {
+            if (parent?.capturing == enemyPiece) {
+                return null
+            }
+            parent = parent?.parent as PieceMovementOption?
+        } while (parent != null)
+        val newMove = PieceMovementOption(this, PlayableCoordinate(destination), parent = parentMove)
+        newMove.capturing = enemyPiece
+        // recursive call to handle any subsequent captures
+        addCapturingMoves(newMove)
+        return enemyPiece
     }
 
     fun canMoveTo(xy: Pair<Int, Int>): Boolean =

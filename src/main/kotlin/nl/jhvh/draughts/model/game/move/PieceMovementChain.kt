@@ -1,6 +1,5 @@
 package nl.jhvh.draughts.model.game.move
 
-import nl.jhvh.draughts.model.DraughtsPiece
 import nl.jhvh.draughts.model.structure.Piece
 
 /**
@@ -8,7 +7,7 @@ import nl.jhvh.draughts.model.structure.Piece
  * The default sorting order [Comparable]<[MovementChain]> gives an ordering with descending [captureCount]
  * (so highest count first).
  */
-internal class PieceMovementChain(override val piece: DraughtsPiece, override val moves: List<PieceMove>) :
+internal class PieceMovementChain(override val piece: Piece, override val moves: List<PieceMove>) :
     MovementChain {
 
     // order by highest capture count first

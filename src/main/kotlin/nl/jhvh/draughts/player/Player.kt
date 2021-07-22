@@ -4,9 +4,9 @@ import nl.jhvh.draughts.formatting.DraughtsFormatting
 import nl.jhvh.draughts.formatting.textformat.BoardTextFormatter
 import nl.jhvh.draughts.formatting.textformat.FormattableList
 import nl.jhvh.draughts.formatting.textformat.PieceTextFormatter
+import nl.jhvh.draughts.formatting.textformat.PieceTextFormattingSymbols.secondPlayerSymbol
+import nl.jhvh.draughts.formatting.textformat.PieceTextFormattingSymbols.startingPlayerSymbol
 import nl.jhvh.draughts.formatting.textformat.SquareTextFormatter
-import nl.jhvh.draughts.formatting.textformat.secondPlayerPieceSymbol
-import nl.jhvh.draughts.formatting.textformat.startingPlayerPieceSymbol
 import nl.jhvh.draughts.model.base.BoardElement
 import nl.jhvh.draughts.model.base.PlayerType
 import nl.jhvh.draughts.model.structure.Board
@@ -41,11 +41,12 @@ fun displayBoard(board: Board, boardTextFormatter: BoardTextFormatter) {
 
 private fun explanation() {
     userInfo()
+    userInfo(""" The player's pieces symbols are: (${PlayerType.STARTING_PLAYER.color}) are indicated by "${startingPlayerSymbol.normal}"""")
+    userInfo( """   ${PlayerType.STARTING_PLAYER.color.padEnd(8)} -  normal: ${startingPlayerSymbol.normal}  crowned: ${startingPlayerSymbol.crowned} """)
+    userInfo( """   ${PlayerType.SECOND_PLAYER.color.padEnd(8)} -  normal: ${secondPlayerSymbol.normal}  crowned: ${secondPlayerSymbol.crowned} """)
+    userInfo()
     userInfo("""Enter positions of move. First number = current position, second number = new position, e.g. "32 27" """)
     userInfo("""In case of multiple jumps, add all numbers on one line, e.g. "32 27 21" """)
-    userInfo()
-    userInfo(""" * The first player's pieces (${PlayerType.STARTING_PLAYER.color}) are indicated by "$startingPlayerPieceSymbol"""")
-    userInfo(""" * The second player's pieces (${PlayerType.SECOND_PLAYER.color}) are indicated by "$secondPlayerPieceSymbol"""")
     userInfo()
 }
 

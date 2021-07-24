@@ -185,28 +185,39 @@ internal class DraughtsPieceMoveTest {
         // then
         assertThat(followingOptions).hasSize(2)
 
-        with (followingOptions.filter { it.coordinate.xy == Pair(currentX+4, currentY+4) }) {
-            assertThat(this.first().capturing).isEqualTo(`enemyPiece+3+3`)
-            val followingOptionsAfterCapture = this.first().followingOptions
+        with (followingOptions.filter { it.coordinate.xy == Pair(currentX+4, currentY+4) }.first()) {
+            val firstOption = this
+            assertThat(firstOption.piece).isEqualTo(subjectSpyk)
+            assertThat(firstOption.capturing).isEqualTo(`enemyPiece+3+3`)
+            assertThat(this.parent).isEqualTo(movementOptionMock)
+            val followingOptionsAfterCapture = firstOption.followingOptions
 
             assertThat(followingOptionsAfterCapture).hasSize(3)
             with (followingOptionsAfterCapture.filter { it.coordinate.xy == Pair(currentX+2, currentY+6) }.first()) {
+                assertThat(firstOption.piece).isEqualTo(subjectSpyk)
                 assertThat(this.capturing).isEqualTo(`enemyPiece+3+5`)
+                assertThat(this.parent).isEqualTo(firstOption)
                 assertThat(this.followingOptions).isEmpty()
             }
             with (followingOptionsAfterCapture.filter { it.coordinate.xy == Pair(currentX+1, currentY+7) }.first()) {
+                assertThat(firstOption.piece).isEqualTo(subjectSpyk)
                 assertThat(this.capturing).isEqualTo(`enemyPiece+3+5`)
+                assertThat(this.parent).isEqualTo(firstOption)
                 assertThat(this.followingOptions).isEmpty()
             }
             with (followingOptionsAfterCapture.filter { it.coordinate.xy == Pair(currentX, currentY+8) }.first()) {
+                assertThat(firstOption.piece).isEqualTo(subjectSpyk)
                 assertThat(this.capturing).isEqualTo(`enemyPiece+3+5`)
+                assertThat(this.parent).isEqualTo(firstOption)
                 assertThat(this.followingOptions).isEmpty()
             }
         }
 
-        with (followingOptions.filter { it.coordinate.xy == Pair(currentX+5, currentY+5) }) {
-            assertThat(this.first().capturing).isEqualTo(`enemyPiece+3+3`)
-            assertThat(this.first().followingOptions).isEmpty()
+        with (followingOptions.filter { it.coordinate.xy == Pair(currentX+5, currentY+5) }.first()) {
+            assertThat(this.piece).isEqualTo(subjectSpyk)
+            assertThat(this.capturing).isEqualTo(`enemyPiece+3+3`)
+            assertThat(this.parent).isEqualTo(movementOptionMock)
+            assertThat(this.followingOptions).isEmpty()
         }
     }
 
@@ -426,11 +437,16 @@ internal class DraughtsPieceMoveTest {
         assertThat(followingOptions).hasSize(2)
         followingOptions.forEach {
             assertThat(it.parent).isEqualTo(movementOptionMock)
+            assertThat(it.piece).isEqualTo(subjectSpyk)
         }
-        assertThat(followingOptions.filter { it.coordinate.xy == Pair(currentX+2, currentY+2) }.first().capturing)
-            .isEqualTo(enemyPiece1)
-        assertThat(followingOptions.filter { it.coordinate.xy == Pair(currentX+2, currentY-2) }.first().capturing)
-            .isEqualTo(enemyPiece2)
+        with(followingOptions.filter { it.coordinate.xy == Pair(currentX+2, currentY+2) }.first()) {
+            assertThat(this.capturing).isEqualTo(enemyPiece1)
+            assertThat(this.followingOptions).isEmpty()
+        }
+        with(followingOptions.filter { it.coordinate.xy == Pair(currentX+2, currentY-2) }.first()) {
+            assertThat(this.capturing).isEqualTo(enemyPiece2)
+            assertThat(this.followingOptions).isEmpty()
+        }
     }
 
     @Test

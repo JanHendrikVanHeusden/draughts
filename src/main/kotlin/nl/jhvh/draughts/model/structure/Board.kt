@@ -21,4 +21,6 @@ interface Board: BoardElement {
     fun getPiece(xy: Pair<Int, Int>): Piece?
 
     fun getPiecesByXY(): Map<Pair<Int, Int>, Piece>
+
+    fun isCrowningPosition(piece: Piece): Boolean
 }

@@ -23,7 +23,7 @@ You need the latter one (the `...-jar-with-dependencies.jar`).
 
 #### Run it
 You can then run it from the command line like this:
-> ``java -cp "< path to jar file > \draughts\target\draughts-1.0-SNAPSHOT-jar-with-dependencies.jar" nl.jhvh.draughts.player.Player``
+> ``java -cp "<path to jar file>/draughts-1.0-SNAPSHOT-jar-with-dependencies.jar" nl.jhvh.draughts.player.Player``
 
 Make your command window larger when output is scrambled.
 
@@ -49,7 +49,9 @@ or not-allowed moves.
 * Moving "normal" (uncrowned) pieces, according to draughts rules
 * Toggle turns (white - black - white - black etc.)
 * Jumps (captures), including multi-jump and backward jump
-   * Including prevention of endless loops in circular jumps
+* Crowning of pieces reaching the opposite side of the board
+* Moves and jumps (captures) by crowned pieces, including multi-jump.
+* Prevention of endless loops in circular jumps
 * Enforcement of the rule that you must play the piece with the highest capture count
    * Including display of which moves *are* allowed, in case of an illegal move
 * Simple representation (by letter-like symbols) of the board with pieces
@@ -62,9 +64,9 @@ or not-allowed moves.
 #### What's NOT in it
 * The game never ends, and no winner (or draw) will be declared
    * There is no detection implemented (yet) of a player reaching the point where no more moves are possible,
-     nor  detection that a player has no more pieces.
-* Crowning of pieces reaching the opposite side of the board is not implemented; neither an algorithm to determine
-  the possible moves of a crowned piece.
+     nor detection that a player has no more pieces.
+   * There is not detection of non-winnable situations (e.g. both players have 1 crowned piece eacht)
+     or repetition of moves that in real life draughts game would be considered a draw
   
 #### Suggestions / wishes
 * Missing features (win / draw; crowned pieces)

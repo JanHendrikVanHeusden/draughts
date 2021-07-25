@@ -60,6 +60,10 @@ internal class DraughtsBoard: Board {
         .map {it.currentCoordinate!!.xy to it}
         .toMap()
 
+    override fun isCrowningPosition(piece: Piece): Boolean =
+        !piece.isCaptured && ((piece.playerType.hasFirstTurn && piece.currentCoordinate!!.y == boardLength -1) ||
+                (!piece.playerType.hasFirstTurn && piece.currentCoordinate!!.y == 0))
+
     override fun format(draughtsFormatter: DraughtsFormatting<BoardElement, FormattableList>): FormattableList {
         return draughtsFormatter.format(this)
     }

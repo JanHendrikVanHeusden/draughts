@@ -8,6 +8,7 @@ import io.mockk.verify
 import nl.jhvh.draughts.formatting.DraughtsFormatting
 import nl.jhvh.draughts.formatting.textformat.FormattableList
 import nl.jhvh.draughts.model.base.BoardElement
+import nl.jhvh.draughts.model.base.PlayerType
 import nl.jhvh.draughts.model.base.boardLength
 import nl.jhvh.draughts.model.base.boardWidth
 import nl.jhvh.draughts.model.structure.Board
@@ -65,6 +66,43 @@ internal class DraughtsBoardTest {
         verify { boardFormatterMock.format(subject) }
         confirmVerified(boardFormatterMock)
         assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun crowningPositionForDarkPiece() {
+        // given
+        val darkPieceMock: Piece = mockk()
+        every { darkPieceMock.isCaptured }.returns(false)
+        every { darkPieceMock.currentCoordinate }.returns(mockk())
+        every { darkPieceMock.currentCoordinate!!.y }.returns(0)
+        every { darkPieceMock.playerType }.returns(PlayerType.SECOND_PLAYER)
+
+        // when, then
+        assertThat(subject.isCrowningPosition(darkPieceMock)).isTrue()
+
+
+        verify { darkPieceMock.isCaptured }
+        verify { darkPieceMock.playerType }
+        verify { darkPieceMock.currentCoordinate }
+        confirmVerified(darkPieceMock)
+    }
+
+    @Test
+    fun crowningPositionLightPiece() {
+        // given
+        val lightPieceMock: Piece = mockk()
+        every { lightPieceMock.isCaptured }.returns(false)
+        every { lightPieceMock.currentCoordinate }.returns(mockk())
+        every { lightPieceMock.currentCoordinate!!.y }.returns(9)
+        every { lightPieceMock.playerType }.returns(PlayerType.STARTING_PLAYER)
+
+        // when, then
+        assertThat(subject.isCrowningPosition(lightPieceMock)).isTrue()
+
+        verify { lightPieceMock.isCaptured }
+        verify { lightPieceMock.playerType }
+        verify { lightPieceMock.currentCoordinate }
+        confirmVerified(lightPieceMock)
     }
 
 }

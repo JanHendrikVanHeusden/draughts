@@ -1,6 +1,12 @@
 package nl.jhvh.draughts.service
 
+import nl.jhvh.draughts.formatting.DraughtsFormatting
+import nl.jhvh.draughts.formatting.textformat.BoardTextFormatter
+import nl.jhvh.draughts.formatting.textformat.FormattableList
+import nl.jhvh.draughts.formatting.textformat.PieceTextFormatter
+import nl.jhvh.draughts.formatting.textformat.SquareTextFormatter
 import nl.jhvh.draughts.log
+import nl.jhvh.draughts.model.base.BoardElement
 import nl.jhvh.draughts.model.base.PlayerType
 import nl.jhvh.draughts.model.game.DraughtsGame
 import nl.jhvh.draughts.model.game.Game
@@ -39,4 +45,17 @@ class DraughtsService : DraughtsServable {
 
     override fun playerInTurn(game: Game): PlayerType = game.playerTypeInTurn()
 
+    override fun formatAsText(game: Game): String {
+        return game.format(boardFormatter).toString()
+    }
+
+    companion object {
+        private val pieceFormatter = PieceTextFormatter()
+        private val squareFormatter = SquareTextFormatter(pieceFormatter)
+
+        @Suppress("UNCHECKED_CAST")
+        private val boardFormatter =
+            BoardTextFormatter(squareFormatter) as DraughtsFormatting<BoardElement, FormattableList>
+
+    }
 }

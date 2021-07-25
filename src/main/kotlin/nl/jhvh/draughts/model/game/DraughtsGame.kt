@@ -7,7 +7,7 @@ import nl.jhvh.draughts.model.structure.Board
 import nl.jhvh.draughts.model.structure.Piece
 import nl.jhvh.draughts.userInfo
 
-class DraughtsGame: Game, Board by DraughtsBoard() {
+internal class DraughtsGame: Game, Board by DraughtsBoard() {
 
     private var isStartingPlayersTurn = true
 

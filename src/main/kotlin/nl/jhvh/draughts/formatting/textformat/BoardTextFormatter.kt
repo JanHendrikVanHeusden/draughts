@@ -9,7 +9,7 @@ import nl.jhvh.draughts.model.base.piecesPerRow
 import nl.jhvh.draughts.model.structure.Board
 import nl.jhvh.draughts.model.structure.Square
 
-class BoardTextFormatter(val squareFormatter: SquareTextFormatter) :
+internal class BoardTextFormatter(val squareFormatter: SquareTextFormatter) :
     DraughtsFormatting<Board, FormattableList> {
 
     override fun format(element: Board): FormattableList {

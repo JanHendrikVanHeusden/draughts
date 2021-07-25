@@ -11,4 +11,6 @@ interface DraughtsServable {
 
     fun playerInTurn(game: Game): PlayerType
 
+    fun formatAsText(game: Game): String
+
 }

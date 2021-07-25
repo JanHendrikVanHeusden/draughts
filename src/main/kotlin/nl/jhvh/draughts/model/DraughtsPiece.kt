@@ -73,29 +73,29 @@ internal class DraughtsPiece(
         }
     }
 
-    private val relativeLeftForward: (moveFrom: Pair<Int, Int>, length: Int) -> Pair<Int, Int> = { moveFrom, length ->
+    private val leftForward: (moveFrom: Pair<Int, Int>, length: Int) -> Pair<Int, Int> = { moveFrom, length ->
         if (this.playerType.hasFirstTurn) Pair(moveFrom.first - length, moveFrom.second + length)
         else Pair(moveFrom.first + length, moveFrom.second - length)
     }
 
-    private val relativeRightForward: (moveFrom: Pair<Int, Int>, length: Int) -> Pair<Int, Int> = { moveFrom, length ->
+    private val rightForward: (moveFrom: Pair<Int, Int>, length: Int) -> Pair<Int, Int> = { moveFrom, length ->
         if (this.playerType.hasFirstTurn) Pair(moveFrom.first + length, moveFrom.second + length)
         else Pair(moveFrom.first - length, moveFrom.second - length)
     }
 
-    private val relativeLeftBackward: (moveFrom: Pair<Int, Int>, length: Int) -> Pair<Int, Int> = { moveFrom, length ->
+    private val leftBackward: (moveFrom: Pair<Int, Int>, length: Int) -> Pair<Int, Int> = { moveFrom, length ->
         if (this.playerType.hasFirstTurn) Pair(moveFrom.first - length, moveFrom.second - length)
         else Pair(moveFrom.first + length, moveFrom.second + length)
     }
 
-    private val relativeRightBackward: (moveFrom: Pair<Int, Int>, length: Int) -> Pair<Int, Int> = { moveFrom, length ->
+    private val rightBackward: (moveFrom: Pair<Int, Int>, length: Int) -> Pair<Int, Int> = { moveFrom, length ->
         if (this.playerType.hasFirstTurn) Pair(moveFrom.first + length, moveFrom.second - length)
         else Pair(moveFrom.first - length, moveFrom.second + length)
     }
 
-    val relativeForwards = listOf(relativeLeftForward, relativeRightForward)
-    val relativeBackwards = listOf(relativeLeftBackward, relativeRightBackward)
-    val relativeMoves = relativeForwards + relativeBackwards
+    val forwardDestinations = listOf(leftForward, rightForward)
+    val backwardDestinations = listOf(leftBackward, rightBackward)
+    val destinations = forwardDestinations + backwardDestinations
 
     fun addNonCapturingMoves(parentMove: PieceMovementOption) {
         if (isCrowned) addNonCapturingCrownedMoves(parentMove)
@@ -108,47 +108,47 @@ internal class DraughtsPiece(
     }
 
     fun addNonCapturingNonCrownedMoves(parentMove: PieceMovementOption) {
-        if (isCaptured) return
-        else
-            relativeForwards.forEach { relMove ->
-                addNonCapturingOption(parentMove, relMove(parentMove.coordinate.xy, 1))
-            }
+        check(!isCaptured) { "Captured pieces must not be moved! Piece = $this" }
+        check(!isCrowned) { "Must be crowned to make a crowned move! Piece = $this" }
+        forwardDestinations.forEach { relMove ->
+            addNonCapturingOption(parentMove, relMove(parentMove.coordinate.xy, 1))
+        }
     }
 
     fun addCapturingNonCrownedMoves(parentMove: PieceMovementOption) {
-        if (isCaptured) return
-        else
-            relativeMoves.forEach { relMove ->
-                addCapturingOption(parentMove, destination = relMove(parentMove.coordinate.xy, 2), capturePos = relMove(parentMove.coordinate.xy, 1))
-            }
+        check(!isCaptured) { "Captured pieces must not be moved! Piece = $this" }
+        check(!isCrowned) { """Must not be crowned to call method "addCapturingNonCrownedMoves()"! Piece = $this""" }
+        destinations.forEach { relMove ->
+            addCapturingOption(parentMove, destination = relMove(parentMove.coordinate.xy, 2), capturePos = relMove(parentMove.coordinate.xy, 1))
+        }
     }
 
     fun addNonCapturingCrownedMoves(parentMove: PieceMovementOption) {
-        if (isCaptured) return
-        else
-            relativeMoves.forEach { relMove ->
-                var length = 1
-                while (addNonCapturingOption(parentMove, relMove(parentMove.coordinate.xy, length))) {
-                    length++
-                }
+        check(!isCaptured) { "Captured pieces must not be moved! Piece = $this" }
+        check(isCrowned) { "Must be crowned to make a crowned move! Piece = $this" }
+        destinations.forEach { relMove ->
+            var length = 1
+            while (addNonCapturingOption(parentMove, relMove(parentMove.coordinate.xy, length))) {
+                length++
             }
+        }
     }
 
     fun addCapturingCrownedMoves(parentMove: PieceMovementOption) {
-        if (isCaptured) return
-        else
-            relativeMoves.forEach { relMove ->
-                var length = 1
-                while (canMoveTo(relMove(parentMove.coordinate.xy, length))) {
+        check(!isCaptured) { "Captured pieces must not be moved! Piece = $this" }
+        check(isCrowned) { "Must be crowned to make a crowned move! Piece = $this" }
+        destinations.forEach { relMove ->
+            var length = 1
+            while (canMoveTo(relMove(parentMove.coordinate.xy, length))) {
+                length++
+            }
+            val capturePos = relMove(parentMove.coordinate.xy, length)
+            if (enemyPiece(capturePos) != null) {
+                while (addCapturingOption(parentMove, relMove(parentMove.coordinate.xy, length+1), capturePos) != null) {
                     length++
                 }
-                val capturePos = relMove(parentMove.coordinate.xy, length)
-                if (enemyPiece(capturePos) != null) {
-                    while (addCapturingOption(parentMove, relMove(parentMove.coordinate.xy, length+1), capturePos) != null) {
-                        length++
-                    }
-                }
             }
+        }
     }
 
     fun addNonCapturingOption(parentMove: PieceMovementOption, destination: Pair<Int, Int>): Boolean {

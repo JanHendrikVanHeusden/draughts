@@ -5,7 +5,7 @@ import nl.jhvh.draughts.formatting.DraughtsFormatting
 import nl.jhvh.draughts.model.base.BoardElement
 import nl.jhvh.draughts.model.structure.Square
 
-class SquareTextFormatter(val pieceFormatter: PieceTextFormatter) : DraughtsFormatting<Square, FormattableList> {
+internal class SquareTextFormatter(val pieceFormatter: PieceTextFormatter) : DraughtsFormatting<Square, FormattableList> {
 
     override fun format(element: Square): FormattableList {
         val xy = element.xy

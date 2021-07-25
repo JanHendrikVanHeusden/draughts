@@ -16,7 +16,7 @@ enum class PieceTextFormattingSymbols(val playerType: PlayerType, val normal: St
     }
 }
 
-class PieceTextFormatter: DraughtsFormatting<Piece, FormattableList> {
+internal class PieceTextFormatter: DraughtsFormatting<Piece, FormattableList> {
 
     override fun format(element: Piece): FormattableList {
         check(!element.isCaptured) { "Formatter should not be called for a piece that was captured already! piece = $element" }

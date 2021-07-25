@@ -69,7 +69,7 @@ fun playDraughts() {
     }
 }
 
-// to run it from command line (jar file)
+/** to run it from command line (jar file */
 class Player {
     companion object {
         @JvmStatic

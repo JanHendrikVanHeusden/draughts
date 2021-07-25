@@ -8,8 +8,8 @@ import nl.jhvh.draughts.model.structure.Piece
 val noPieceFormat: FormattableList = FormattableList(listOf(" "))
 
 enum class PieceTextFormattingSymbols(val playerType: PlayerType, val normal: String, val crowned: String) {
-    startingPlayerSymbol(PlayerType.STARTING_PLAYER, "o", "Ô"),
-    secondPlayerSymbol(PlayerType.SECOND_PLAYER, "x", "Ê" );
+    startingPlayerSymbol(PlayerType.STARTING_PLAYER, "o", "8"),
+    secondPlayerSymbol(PlayerType.SECOND_PLAYER, "x", "E" );
 
     companion object {
         val mapByPlayerType: Map<PlayerType, PieceTextFormattingSymbols> = values().map { it.playerType to it }.toMap()

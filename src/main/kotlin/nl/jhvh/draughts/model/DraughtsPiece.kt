@@ -51,6 +51,10 @@ internal class DraughtsPiece(
         this.currentCoordinate = chain.moves.last().to
         // capture the enemy's pieces
         chain.moves.forEach{ it.capturing?.isCaptured = true }
+        if (!isCrowned && board.isCrowningPosition(this)) {
+            isCrowned = true
+            userInfo("Piece on position ${currentCoordinate!!.position} (${playerType.color}) is crowned!")
+        }
     }
 
     override fun allowedMoves(): Collection<MovementChain> {

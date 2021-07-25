@@ -44,7 +44,7 @@ private fun inputNumbers(): List<Int> {
     return try {
         input().split(whitespaceRegex).map { it.toInt() }
     } catch (e: NumberFormatException) {
-        userInfo("Please enter numbers only, divided by spaces!")
+        userInfo("Please enter numbers only, separated by spaces!")
         inputNumbers()
     }
 }
@@ -57,14 +57,17 @@ fun playDraughts() {
     val game = service.newGame()
 
     userInfo(service.formatAsText(game))
-    userInfo("${service.playerInTurn(game).color} starts")
     explanation()
+    userInfo("${service.playerInTurn(game).color} starts")
+    userInfo("Enter move for ${service.playerInTurn(game).color}: ")
 
     while (true) {
         if (!service.doMove(game, inputNumbers())) {
             userInfo("Try again!")
         } else {
             userInfo(service.formatAsText(game))
+            userInfo()
+            userInfo("Enter move for ${service.playerInTurn(game).color}: ")
         }
     }
 }

@@ -5,6 +5,7 @@ import nl.jhvh.draughts.model.base.boardLength
 import nl.jhvh.draughts.model.base.boardWidth
 import nl.jhvh.draughts.model.base.maxPiecePositionNumber
 import nl.jhvh.draughts.model.base.minPiecePositionNumber
+import nl.jhvh.draughts.rule.ValidationException
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -34,28 +35,28 @@ internal class PlayableCoordinateTest {
     }
 
     @Test
-    fun `constructing Coordinate of non-playable fields should throw IllegalArgumentException`() {
-        var exception: IllegalArgumentException
+    fun `constructing Coordinate of non-playable fields should throw ValidationException`() {
+        var exception: ValidationException
 
         exception = assertThrows { PlayableCoordinate(0, 9) }
         assertThat(exception.message).isEqualTo("Given values x = 0 and y = 9 indicate a non-playable position")
         exception = assertThrows { PlayableCoordinate(4, 1) }
         assertThat(exception.message).isEqualTo("Given values x = 4 and y = 1 indicate a non-playable position")
 
-        assertThrows<IllegalArgumentException> { PlayableCoordinate(4, 9) }
-        assertThrows<IllegalArgumentException> { PlayableCoordinate(8, 9) }
-        assertThrows<IllegalArgumentException> { PlayableCoordinate(1, 8) }
-        assertThrows<IllegalArgumentException> { PlayableCoordinate(7, 8) }
-        assertThrows<IllegalArgumentException> { PlayableCoordinate(1, 8) }
-        assertThrows<IllegalArgumentException> { PlayableCoordinate(0, 7) }
-        assertThrows<IllegalArgumentException> { PlayableCoordinate(2, 1) }
-        assertThrows<IllegalArgumentException> { PlayableCoordinate(7, 0) }
-        assertThrows<IllegalArgumentException> { PlayableCoordinate(9, 0) }
+        assertThrows<ValidationException> { PlayableCoordinate(4, 9) }
+        assertThrows<ValidationException> { PlayableCoordinate(8, 9) }
+        assertThrows<ValidationException> { PlayableCoordinate(1, 8) }
+        assertThrows<ValidationException> { PlayableCoordinate(7, 8) }
+        assertThrows<ValidationException> { PlayableCoordinate(1, 8) }
+        assertThrows<ValidationException> { PlayableCoordinate(0, 7) }
+        assertThrows<ValidationException> { PlayableCoordinate(2, 1) }
+        assertThrows<ValidationException> { PlayableCoordinate(7, 0) }
+        assertThrows<ValidationException> { PlayableCoordinate(9, 0) }
     }
 
     @Test
-    fun `constructing Coordinate with indexes outside board should throw IllegalArgumentException`() {
-        var exception: IllegalArgumentException
+    fun `constructing Coordinate with indexes outside board should throw ValidationException`() {
+        var exception: ValidationException
 
         exception = assertThrows { PlayableCoordinate(-1, 5) }
         assertThat(exception.message).isEqualTo("x coordinate should be zero or positive, but is -1" )
@@ -70,8 +71,8 @@ internal class PlayableCoordinateTest {
     }
 
     @Test
-    fun `constructing Coordinate with position outside board should throw IllegalArgumentException`() {
-        var exception: IllegalArgumentException
+    fun `constructing Coordinate with position outside board should throw ValidationException`() {
+        var exception: ValidationException
 
         exception = assertThrows { PlayableCoordinate(0) }
         assertThat(exception.message).isEqualTo("position must be greater than zero, but is 0" )

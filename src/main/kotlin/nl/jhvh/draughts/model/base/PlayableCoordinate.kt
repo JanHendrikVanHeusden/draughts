@@ -1,6 +1,8 @@
 package nl.jhvh.draughts.model.base
 
 import nl.jhvh.draughts.isEven
+import nl.jhvh.draughts.rule.ValidationException
+import nl.jhvh.draughts.rule.validate
 
 /**
  * A [PlayableCoordinate] defines the position of a playable (accessible) square on a board.
@@ -10,21 +12,21 @@ import nl.jhvh.draughts.isEven
  *
  * @constructor  Constructs a [PlayableCoordinate] by its position number.
  * @param position The position number, according to draughts numbering convention.
- * @throws IllegalArgumentException if [position] is outside the board boundaries
+ * @throws ValidationException if [position] is outside the board boundaries
  */
 data class PlayableCoordinate constructor(val position: Int): Comparable<PlayableCoordinate> {
     /**
      * Constructs a [PlayableCoordinate] by x and y indices, zero based, with lower left square = (0,0) and upper right square = (9,9)
      * @param x zero based left-to-right index
      * @param y zero based bottom-to-top index
-     * @throws IllegalArgumentException if combination of ([x], [y]) indicates a non-playable (non-accessible) field, or outside the board boundaries
+     * @throws ValidationException if combination of ([x], [y]) indicates a non-playable (non-accessible) field, or outside the board boundaries
      */
     constructor(x: Int, y: Int) : this (xyToPosition(x, y))
 
     /**
      * Constructs a [PlayableCoordinate] by a [Pair] of x and y indices, zero based, with lower left square = (0,0) and upper right square = (9,9)
      * @param xy [Pair] of indexes, [Pair.first] being [x], [Pair.second] being [y]
-     * @throws IllegalArgumentException if combination of ([x], [y]) indicates a non-playable (non-accessible) field, or outside the board boundaries
+     * @throws ValidationException if combination of ([x], [y]) indicates a non-playable (non-accessible) field, or outside the board boundaries
      */
     constructor(xy: Pair<Int, Int>) : this (xy.first, xy.second)
 
@@ -38,8 +40,8 @@ data class PlayableCoordinate constructor(val position: Int): Comparable<Playabl
     }
 
     private fun validatePosition() {
-        require(this.position > 0) { "position must be greater than zero, but is ${this.position}" }
-        require(this.position <= maxPiecePositionNumber) { "position must be at most $maxPiecePositionNumber, but is ${this.position}" }
+        validate(this.position > 0) { "position must be greater than zero, but is ${this.position}" }
+        validate(this.position <= maxPiecePositionNumber) { "position must be at most $maxPiecePositionNumber, but is ${this.position}" }
     }
 
     override fun toString(): String = "${this.javaClass.simpleName}(position=$position, x=$x, y=$y)"
@@ -56,19 +58,19 @@ data class PlayableCoordinate constructor(val position: Int): Comparable<Playabl
 
 }
 
-@Throws(IllegalArgumentException::class)
+@Throws(ValidationException::class)
 private fun xyToPosition(x: Int, y: Int): Int {
     validateIndices(x, y)
     val tmpPosition = squareCount - boardLength * (y + 1) + (if (y.isEven()) (x + 2) else (x + 1))
-    require(tmpPosition.isEven()) { "Given values x = $x and y = $y indicate a non-playable position" }
+    validate(tmpPosition.isEven()) { "Given values x = $x and y = $y indicate a non-playable position" }
     return tmpPosition / 2
 }
 
 private fun validateIndices(x: Int, y: Int) {
-    require(x >= 0) { "x coordinate should be zero or positive, but is $x" }
-    require(x < boardWidth) { "x coordinate should be less than $boardWidth, but is $x" }
-    require(y >= 0) { "y coordinate should be zero or positive, but is $y" }
-    require(y < boardLength) { "y coordinate should be less than $boardLength, but is $y" }
+    validate(x >= 0) { "x coordinate should be zero or positive, but is $x" }
+    validate(x < boardWidth) { "x coordinate should be less than $boardWidth, but is $x" }
+    validate(y >= 0) { "y coordinate should be zero or positive, but is $y" }
+    validate(y < boardLength) { "y coordinate should be less than $boardLength, but is $y" }
 }
 
 // See the README.md file in this project (or Wikipedia etc.) for numbering convention of draughts.

@@ -9,6 +9,7 @@ import nl.jhvh.draughts.model.game.move.MovementChain
 import nl.jhvh.draughts.model.game.move.options.PieceMovementOption
 import nl.jhvh.draughts.model.structure.Board
 import nl.jhvh.draughts.model.structure.Piece
+import nl.jhvh.draughts.rule.validate
 import nl.jhvh.draughts.userInfo
 
 internal class DraughtsPiece(
@@ -46,7 +47,7 @@ internal class DraughtsPiece(
 
     override fun move(chain: MovementChain) {
         check(chain.piece == this) { "A movement for piece=${chain.piece} can not be applied to this piece = $this" }
-        require(!isCaptured || chain.moves.isEmpty()) { "This piece was captured already, it cannot be moved! piece = $this" }
+        validate(!isCaptured || chain.moves.isEmpty()) { "This piece was captured already, it cannot be moved! piece = $this" }
         // move to new position
         this.currentCoordinate = chain.moves.last().to
         // capture the enemy's pieces
@@ -71,8 +72,8 @@ internal class DraughtsPiece(
             return emptyList()
         }
         with(PieceMovementOption(this, currentCoordinate!!)) {
-                addCapturingMoves(this) // does nothing yet!
-                addNonCapturingMoves(this) // does nothing yet!
+            addCapturingMoves(this)
+            addNonCapturingMoves(this)
             return this.toMovementChains()
         }
     }

@@ -29,7 +29,7 @@ private fun welcome(): Boolean {
 
 private fun explanation() {
     userInfo()
-    userInfo(""" The player's pieces symbols are: (${PlayerType.STARTING_PLAYER.color}) are indicated by "${startingPlayerSymbol.normal}"""")
+    userInfo("The player's pieces symbols are:")
     userInfo( """   ${PlayerType.STARTING_PLAYER.color.padEnd(8)} -  normal: ${startingPlayerSymbol.normal}  crowned: ${startingPlayerSymbol.crowned} """)
     userInfo( """   ${PlayerType.SECOND_PLAYER.color.padEnd(8)} -  normal: ${secondPlayerSymbol.normal}  crowned: ${secondPlayerSymbol.crowned} """)
     userInfo()

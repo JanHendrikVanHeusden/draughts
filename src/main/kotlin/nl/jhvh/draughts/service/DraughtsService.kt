@@ -20,14 +20,13 @@ class DraughtsService : DraughtsServable {
 
     override fun newGame(): Game = DraughtsGame()
 
-    // FIXME: error handling!
     override fun doMove(game: Game, move: List<Int>): Boolean {
         try {
-            validate(move.isNotEmpty()) { "No position specified, can not do anything! Wanted move = $move" }
-            validate(move.size >= 2) { """No "to" position specified! Wanted move = $move""" }
+            validate(move.isNotEmpty()) { "No position specified, can not do anything! Intended move = $move" }
+            validate(move.size >= 2) { """No "to" position specified! Intended move = $move""" }
             val currentPosition = move.first()
             val piece = game.getPiece(currentPosition)
-            validate(piece != null) { "There is no piece on position $currentPosition, cannot do a move! Wanted move = $move" }
+            validate(piece != null) { "There is no piece on position $currentPosition, cannot do a move! Intended move = $move" }
 
             return game.move(piece!!, move)
 

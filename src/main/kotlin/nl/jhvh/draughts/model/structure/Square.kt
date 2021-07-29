@@ -9,7 +9,7 @@ interface Square: BoardElement, Comparable<Square> {
 
     val squareType: SquareType
 
-    fun getPiece(): Piece?
+    var piece: Piece?
 
     override fun equals(other: Any?): Boolean
 

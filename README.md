@@ -70,7 +70,7 @@ or not-allowed moves.
   
 #### Suggestions / wishes
 * Missing features (win / draw; crowned pieces)
-* TODO's / FIXME's
+* TODO's
    * Especially the very inefficient way of retrieving piece information for each square
 * Let players specify names, so it can say *It's John's turn* instead of *black is in turn*
 * Undo / redo
@@ -86,6 +86,5 @@ Both the code names (variables, classes etc.) and all informative feedback from 
 These feedback strings (prompts, messages, errors etc.) are hard coded (String literals) directly within the code.
 The time available for this code challenge was short, so I decided to hard code these to save time.
 
-### TODO's / FIXME's
-Several `TODO`'s and `FIXME`s are left in the code, these should be handled when a production-strength application
-were required, or simply about (hopefully not too dirty) workarounds.
+### TODO's
+Several `TODO`'s are left in the code, these should be handled when a production-strength application were required.

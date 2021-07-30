@@ -34,10 +34,10 @@ internal class DraughtsBoardInitializationTest {
     @Test
     fun getSquares() {
         val squares = subject.squares
-        val expectedXY: Set<Pair<Int, Int>> = (0 until boardWidth)
-            .map { x -> (0 until boardLength)
-                .map { y -> Pair(x, y) }}
-            .flatten().toSet()
+        val expectedXY: Set<Pair<Int, Int>> =
+            (0 until boardWidth).map { x -> (0 until boardLength).map { y -> Pair(x, y) }}
+                .flatten()
+                .toSet()
 
         assertThat(squares.size).isEqualTo(boardWidth * boardLength)
         assertThat(squares.keys).isEqualTo(expectedXY)
@@ -55,77 +55,9 @@ internal class DraughtsBoardInitializationTest {
         }
     }
 
-//    @Test
-//    fun getDarkPieces() {
-//        val darkPieces = subject.allPiecesByPlayerType[SECOND_PLAYER]!!
-//
-//        assertThat(darkPieces.size).isEqualTo(piecesPerPlayer)
-//        darkPieces.forEach { assertThat(it.playerType).isSameAs(SECOND_PLAYER) }
-//        assertThat(darkPieces.map { it.initialCoordinate.position })
-//            .containsExactlyInAnyOrderElementsOf(1..piecesPerPlayer)
-//    }
-//
-//    @Test
-//    fun getLightPieces() {
-//        val lightPieces = subject.allPiecesByPlayerType[STARTING_PLAYER]!!
-//        val expectedPositions = (maxPiecePositionNumber - piecesPerPlayer + 1) .. maxPiecePositionNumber
-//
-//        assertThat(lightPieces.size).isEqualTo(piecesPerPlayer)
-//        lightPieces.forEach { assertThat(it.playerType).isSameAs(STARTING_PLAYER) }
-//        assertThat(lightPieces.map { it.initialCoordinate.position })
-//            .containsExactlyInAnyOrderElementsOf(expectedPositions)
-//    }
-//
-//    @Test
-//    fun getAllPieces() {
-//        val pieces = subject.allPieces
-//        assertThat(pieces.size).isEqualTo(piecesPerPlayer * 2)
-//        assertThat(pieces).containsExactlyInAnyOrderElementsOf(subject.allPiecesByPlayerType.values.flatten())
-//    }
-
     @Test
     fun getBoard() {
         assertThat(subject.board).isSameAs(subject)
     }
-
-//    @Test
-//    fun `getPiece with Pair argument - occupied positions`() {
-//        (1..20).map { PlayableCoordinate(it).xy }.forEach { pair ->
-//            with(subject.getPiece(pair)!!) {
-//                assertThat(this.initialCoordinate.xy).isEqualTo(pair)
-//                assertThat(this.isCaptured).isFalse()
-//                // "black" is on positions 1..20
-//                assertThat(this.playerType).isSameAs(SECOND_PLAYER)
-//            }
-//        }
-//        (31..50).map { PlayableCoordinate(it).xy }.forEach { pair ->
-//            with(subject.getPiece(pair)!!) {
-//                assertThat(this.initialCoordinate.xy).isEqualTo(pair)
-//                assertThat(this.isCaptured).isFalse()
-//                // "white" is on positions 31..50
-//                assertThat(this.playerType).isSameAs(STARTING_PLAYER)
-//            }
-//        }
-//    }
-//
-//    @Test
-//    fun `getPiece with Pair argument - non-occupied positions`() {
-//        (21..30).map { PlayableCoordinate(it).xy }.forEach { pair ->
-//            assertThat(subject.getPiece(pair)).isNull()
-//        }
-//    }
-//
-//    @Test
-//    fun `getPiece with Pair argument - non-accessible positions`() {
-//        val nonAccessiblePositions: MutableSet<Pair<Int, Int>> = mutableSetOf()
-//        (0..9).forEach { x -> (0..9).forEach { y -> nonAccessiblePositions.add(Pair(x, y)) } }
-//
-//        (1..20).forEach { nonAccessiblePositions.remove(PlayableCoordinate(it).xy) }
-//        (31..50).forEach { nonAccessiblePositions.remove(PlayableCoordinate(it).xy) }
-//
-//        nonAccessiblePositions.forEach { pair ->
-//            assertThat(subject.getPiece(pair)).isNull()
-//        }
-//    }
 
 }

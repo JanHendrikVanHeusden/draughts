@@ -1,13 +1,9 @@
 package nl.jhvh.draughts.model
 
-import io.mockk.clearMocks
-import io.mockk.confirmVerified
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.spyk
-import io.mockk.verify
+import io.mockk.*
 import nl.jhvh.draughts.model.base.PlayableCoordinate
 import nl.jhvh.draughts.model.base.PlayerType
+import nl.jhvh.draughts.model.game.Game
 import nl.jhvh.draughts.model.game.move.options.PieceMovementOption
 import nl.jhvh.draughts.model.structure.Board
 import nl.jhvh.draughts.model.structure.Piece
@@ -19,7 +15,9 @@ import kotlin.test.assertFails
 
 internal class DraughtsPieceMoveTest {
 
+    private val gameMock: Game = mockk()
     private val boardMock: Board = mockk()
+
     private var coordinateMock: PlayableCoordinate = mockk()
 
     private var currentX = -1  // not valid, must be set per test!
@@ -30,9 +28,14 @@ internal class DraughtsPieceMoveTest {
 
     @BeforeEach
     fun setUp() {
-        clearMocks(boardMock, coordinateMock)
+        clearMocks(gameMock, coordinateMock)
         currentX = -1  // not valid, must be set per test!
         currentY = -1  // not valid, must be set per test!
+        initMocks()
+    }
+
+    private fun initMocks() {
+        every { gameMock.board } returns boardMock
         coordinateMock = mockk()
         every { coordinateMock.x }.answers { currentX }
         every { coordinateMock.y }.answers { currentY }
@@ -43,6 +46,8 @@ internal class DraughtsPieceMoveTest {
         every { movementOptionMock.coordinate }.returns(coordinateMock)
         followingOptions = mutableListOf()
         every { movementOptionMock.followingOptions }.returns(followingOptions)
+
+        every { boardMock.squares } returns emptyMap() // override in test when needed
     }
 
     @Test
@@ -68,7 +73,7 @@ internal class DraughtsPieceMoveTest {
         // given
         currentX = 3
         currentY = 5
-        val subjectSpyk = spyk(DraughtsPiece(boardMock, coordinateMock, PlayerType.SECOND_PLAYER))
+        val subjectSpyk = spyk(DraughtsPiece(gameMock, coordinateMock, PlayerType.SECOND_PLAYER))
 
         every { subjectSpyk.isCrowned }.returns(true)
 
@@ -99,7 +104,7 @@ internal class DraughtsPieceMoveTest {
         currentX = 3
         currentY = 5
 
-        val subjectSpyk = spyk(DraughtsPiece(boardMock, coordinateMock, PlayerType.SECOND_PLAYER))
+        val subjectSpyk = spyk(DraughtsPiece(gameMock, coordinateMock, PlayerType.SECOND_PLAYER))
 
         every { subjectSpyk.isCrowned }.returns(true)
 
@@ -136,7 +141,7 @@ internal class DraughtsPieceMoveTest {
         // given
         currentX = 4
         currentY = 0
-        val subjectSpyk = spyk(DraughtsPiece(boardMock, coordinateMock, PlayerType.SECOND_PLAYER))
+        val subjectSpyk = spyk(DraughtsPiece(gameMock, coordinateMock, PlayerType.SECOND_PLAYER))
 
         every { subjectSpyk.isCrowned }.returns(true)
 
@@ -217,7 +222,7 @@ internal class DraughtsPieceMoveTest {
         // given
         currentX = 3
         currentY = 5
-        val subjectSpyk = spyk(DraughtsPiece(boardMock, coordinateMock, PlayerType.SECOND_PLAYER))
+        val subjectSpyk = spyk(DraughtsPiece(gameMock, coordinateMock, PlayerType.SECOND_PLAYER))
 
         every { subjectSpyk.canMoveTo(Pair(currentX-1, currentY-1)) }.returns(true)
         every { subjectSpyk.canMoveTo(Pair(currentX+1, currentY-1)) }.returns(true)
@@ -241,7 +246,7 @@ internal class DraughtsPieceMoveTest {
         // given
         currentX = 7
         currentY = 3
-        val subjectSpyk = spyk(DraughtsPiece(boardMock, coordinateMock, PlayerType.STARTING_PLAYER))
+        val subjectSpyk = spyk(DraughtsPiece(gameMock, coordinateMock, PlayerType.STARTING_PLAYER))
 
         every { subjectSpyk.canMoveTo(Pair(currentX-1, currentY+1)) }.returns(true)
         every { subjectSpyk.canMoveTo(Pair(currentX+1, currentY+1)) }.returns(false)
@@ -267,7 +272,7 @@ internal class DraughtsPieceMoveTest {
         // given
         currentX = 5
         currentY = 1
-        val subjectSpyk = spyk(DraughtsPiece(boardMock, coordinateMock, PlayerType.STARTING_PLAYER))
+        val subjectSpyk = spyk(DraughtsPiece(gameMock, coordinateMock, PlayerType.STARTING_PLAYER))
 
         every { subjectSpyk.canMoveTo(any()) }.returns(false)
         // to make sure it is not emptied somehow, we populate some stuff already
@@ -287,7 +292,7 @@ internal class DraughtsPieceMoveTest {
         // given
         currentX = 3
         currentY = 5
-        val subjectSpyk = spyk(DraughtsPiece(boardMock, coordinateMock, PlayerType.SECOND_PLAYER))
+        val subjectSpyk = spyk(DraughtsPiece(gameMock, coordinateMock, PlayerType.SECOND_PLAYER))
 
         // 4 times true
         every { subjectSpyk.canMoveTo(any()) }.returns(false)
@@ -332,7 +337,7 @@ internal class DraughtsPieceMoveTest {
         // given
         currentX = 4
         currentY = 4
-        val subjectSpyk = spyk(DraughtsPiece(boardMock, coordinateMock, PlayerType.SECOND_PLAYER))
+        val subjectSpyk = spyk(DraughtsPiece(gameMock, coordinateMock, PlayerType.SECOND_PLAYER))
 
         every { subjectSpyk.canMoveTo(any()) }.returns(false)
         every { subjectSpyk.canMoveTo(Pair(currentX+2, currentY+2)) }.returns(true)
@@ -372,7 +377,7 @@ internal class DraughtsPieceMoveTest {
         // given
         currentX = 4
         currentY = 4
-        val subjectSpyk = spyk(DraughtsPiece(boardMock, coordinateMock, PlayerType.SECOND_PLAYER))
+        val subjectSpyk = spyk(DraughtsPiece(gameMock, coordinateMock, PlayerType.SECOND_PLAYER))
 
         every { subjectSpyk.canMoveTo(any()) }.returns(false)
         // captures enemyPiece1
@@ -418,7 +423,7 @@ internal class DraughtsPieceMoveTest {
         // given
         currentX = 3
         currentY = 7
-        val subjectSpyk = spyk(DraughtsPiece(boardMock, coordinateMock, PlayerType.SECOND_PLAYER))
+        val subjectSpyk = spyk(DraughtsPiece(gameMock, coordinateMock, PlayerType.SECOND_PLAYER))
 
         every { subjectSpyk.canMoveTo(any()) }.returns(false)
         // captures enemyPiece1
@@ -499,7 +504,7 @@ internal class DraughtsPieceMoveTest {
         // given
         currentX = 5
         currentY = 1
-        val subjectSpyk = spyk(DraughtsPiece(boardMock, coordinateMock, PlayerType.STARTING_PLAYER))
+        val subjectSpyk = spyk(DraughtsPiece(gameMock, coordinateMock, PlayerType.STARTING_PLAYER))
         subjectSpyk.isCaptured = true
         clearMocks(subjectSpyk)
 
@@ -512,6 +517,7 @@ internal class DraughtsPieceMoveTest {
         verify(atLeast = 1) { subjectSpyk.isCaptured }
         verify(atLeast = 1) { subjectSpyk.toString() }
         verify(atLeast = 1) { coordinateMock.position }
+        verify(atLeast = 1) { coordinateMock.xy }
 
         confirmVerified(coordinateMock, movementOptionMock, subjectSpyk)
     }
@@ -521,7 +527,7 @@ internal class DraughtsPieceMoveTest {
         // given
         currentX = 5
         currentY = 1
-        val subjectSpyk = spyk(DraughtsPiece(boardMock, coordinateMock, PlayerType.STARTING_PLAYER))
+        val subjectSpyk = spyk(DraughtsPiece(gameMock, coordinateMock, PlayerType.STARTING_PLAYER))
         subjectSpyk.isCrowned = true
         subjectSpyk.isCaptured = true
         clearMocks(subjectSpyk)
@@ -535,6 +541,7 @@ internal class DraughtsPieceMoveTest {
         verify(atLeast = 1) { subjectSpyk.isCaptured }
         verify(atLeast = 1) { subjectSpyk.toString() }
         verify(atLeast = 1) { coordinateMock.position }
+        verify(atLeast = 1) { coordinateMock.xy }
 
         confirmVerified(coordinateMock, movementOptionMock, subjectSpyk)
     }
@@ -544,7 +551,7 @@ internal class DraughtsPieceMoveTest {
         // given
         currentX = 3
         currentY = 7
-        val subjectSpyk = spyk(DraughtsPiece(boardMock, coordinateMock, PlayerType.STARTING_PLAYER))
+        val subjectSpyk = spyk(DraughtsPiece(gameMock, coordinateMock, PlayerType.STARTING_PLAYER))
         subjectSpyk.isCaptured = true
         clearMocks(subjectSpyk)
 
@@ -554,9 +561,10 @@ internal class DraughtsPieceMoveTest {
         // then
         assertThat(exception).isInstanceOf(IllegalStateException::class.java)
         verify { subjectSpyk.addCapturingNonCrownedMoves(movementOptionMock) }
-        verify (atLeast = 1) { subjectSpyk.toString() }
-        verify (atLeast = 1) { subjectSpyk.isCaptured }
-        verify (atLeast = 1) { coordinateMock.position }
+        verify(atLeast = 1) { subjectSpyk.toString() }
+        verify(atLeast = 1) { subjectSpyk.isCaptured }
+        verify(atLeast = 1) { coordinateMock.position }
+        verify(atLeast = 1) { coordinateMock.xy }
 
         confirmVerified(subjectSpyk, coordinateMock, movementOptionMock)
     }
@@ -566,7 +574,7 @@ internal class DraughtsPieceMoveTest {
         // given
         currentX = 3
         currentY = 7
-        val subjectSpyk = spyk(DraughtsPiece(boardMock, coordinateMock, PlayerType.STARTING_PLAYER))
+        val subjectSpyk = spyk(DraughtsPiece(gameMock, coordinateMock, PlayerType.STARTING_PLAYER))
         subjectSpyk.isCrowned = true
         subjectSpyk.isCaptured = true
         clearMocks(subjectSpyk)
@@ -577,9 +585,10 @@ internal class DraughtsPieceMoveTest {
         // then
         assertThat(exception).isInstanceOf(IllegalStateException::class.java)
         verify { subjectSpyk.addCapturingCrownedMoves(movementOptionMock) }
-        verify (atLeast = 1) { subjectSpyk.toString() }
-        verify (atLeast = 1) { subjectSpyk.isCaptured }
-        verify (atLeast = 1) { coordinateMock.position }
+        verify(atLeast = 1) { subjectSpyk.toString() }
+        verify(atLeast = 1) { subjectSpyk.isCaptured }
+        verify(atLeast = 1) { coordinateMock.position }
+        verify(atLeast = 1) { coordinateMock.xy }
 
         confirmVerified(subjectSpyk, coordinateMock, movementOptionMock)
     }

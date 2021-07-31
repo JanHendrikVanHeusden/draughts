@@ -5,17 +5,21 @@ import nl.jhvh.draughts.formatting.textformat.FormattableList
 import nl.jhvh.draughts.model.base.BoardElement
 import nl.jhvh.draughts.model.base.PlayableCoordinate
 import nl.jhvh.draughts.model.base.PlayerType
+import nl.jhvh.draughts.model.game.Game
 import nl.jhvh.draughts.model.game.move.MovementChain
 import nl.jhvh.draughts.model.game.move.options.PieceMovementOption
 import nl.jhvh.draughts.model.structure.Board
 import nl.jhvh.draughts.model.structure.Piece
+import nl.jhvh.draughts.rule.validate
 import nl.jhvh.draughts.userInfo
 
 internal class DraughtsPiece(
-    override val board: Board,
+    override val game: Game,
     override val initialCoordinate: PlayableCoordinate,
     override val playerType: PlayerType
 ) : Piece {
+
+    override val board: Board = game.board
 
     override var currentCoordinate: PlayableCoordinate? = initialCoordinate
         set(value) {
@@ -24,7 +28,11 @@ internal class DraughtsPiece(
             }
             check(value != null || isCaptured) { """Can set the current coordinate to null only if piece was captured, but it wasn't captured! (piece: "$field")""" }
             check(!(field == null && value != null)) { """Piece "$this" is captured already, can not be moved to $value""" }
+            this.board.squares[field?.xy]?.occupyingPiece = null
             field = value
+            if (value != null) {
+                this.board.squares[value.xy]!!.occupyingPiece = this
+            }
         }
 
     override var isCaptured: Boolean = false
@@ -46,12 +54,12 @@ internal class DraughtsPiece(
 
     override fun move(chain: MovementChain) {
         check(chain.piece == this) { "A movement for piece=${chain.piece} can not be applied to this piece = $this" }
-        require(!isCaptured || chain.moves.isEmpty()) { "This piece was captured already, it cannot be moved! piece = $this" }
+        validate(!isCaptured || chain.moves.isEmpty()) { "This piece was captured already, it cannot be moved! piece = $this" }
         // move to new position
         this.currentCoordinate = chain.moves.last().to
         // capture the enemy's pieces
         chain.moves.forEach{ it.capturing?.isCaptured = true }
-        if (!isCrowned && board.isCrowningPosition(this)) {
+        if (!isCrowned && game.isCrowningPosition(this)) {
             isCrowned = true
             userInfo("Piece on position ${currentCoordinate!!.position} (${playerType.color}) is crowned!")
         }
@@ -71,8 +79,8 @@ internal class DraughtsPiece(
             return emptyList()
         }
         with(PieceMovementOption(this, currentCoordinate!!)) {
-                addCapturingMoves(this) // does nothing yet!
-                addNonCapturingMoves(this) // does nothing yet!
+            addCapturingMoves(this)
+            addNonCapturingMoves(this)
             return this.toMovementChains()
         }
     }
@@ -185,15 +193,15 @@ internal class DraughtsPiece(
     }
 
     fun canMoveTo(xy: Pair<Int, Int>): Boolean =
-        this.board.squares[xy] != null && this.board.getPiecesByXY()[xy] == null
+        this.board.squares[xy] != null && this.board.squares[xy]?.occupyingPiece == null
 
     fun enemyPiece(xy: Pair<Int, Int>): Piece? {
         if (this.board.squares[xy] == null) {
             return null
         }
-        val piece = this.board.getPiecesByXY()[xy]
+        val piece = this.board.squares[xy]?.occupyingPiece
         if (piece != null && piece.playerType != this.playerType) {
-            return piece
+            return piece // enemy piece
         }
         return null
     }

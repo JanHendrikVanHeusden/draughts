@@ -1,11 +1,12 @@
 package nl.jhvh.draughts.model.structure
 
 import nl.jhvh.draughts.model.base.BoardElement
+import nl.jhvh.draughts.model.base.GameElement
 import nl.jhvh.draughts.model.base.PlayableCoordinate
 import nl.jhvh.draughts.model.base.PlayerType
 import nl.jhvh.draughts.model.game.move.MovementChain
 
-interface Piece: BoardElement, Comparable<Piece> {
+interface Piece: BoardElement, GameElement, Comparable<Piece> {
 
     val initialCoordinate: PlayableCoordinate
 

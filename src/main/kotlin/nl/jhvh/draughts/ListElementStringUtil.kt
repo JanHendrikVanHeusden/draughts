@@ -1,29 +1,34 @@
 package nl.jhvh.draughts
 
+import nl.jhvh.draughts.rule.ValidationException
+import nl.jhvh.draughts.rule.validate
 import org.apache.commons.lang3.StringUtils
 
 /** @return The length of the longest [toString] of all elements in the collection */
 fun Collection<*>.maxStringLength(): Int = this.map { s -> s.toString().length } .maxOrNull()!!
 
+@Throws(ValidationException::class)
 fun List<*>.alignRight(extraLeftPad: Int = 0, extraRightPad: Int = 0): List<String> {
-    require(extraLeftPad >= 0, { "extraLeftPad must be non-negative or omitted (current: $extraLeftPad)" })
-    require(extraRightPad >= 0, { "extraRightPad must be non-negative or omitted (current: $extraRightPad)" })
+    validate(extraLeftPad >= 0, { "extraLeftPad must be non-negative or omitted (current: $extraLeftPad)" })
+    validate(extraRightPad >= 0, { "extraRightPad must be non-negative or omitted (current: $extraRightPad)" })
     val maxLength = this.maxStringLength()
     val padAction: (String) -> String = { it.padStart(maxLength + extraLeftPad).padEnd(maxLength + extraLeftPad + extraRightPad) }
     return this.map { padAction(it.toString()) }
 }
 
+@Throws(ValidationException::class)
 fun List<*>.alignLeft(extraLeftPad: Int = 0, extraRightPad: Int = 0): List<String> {
-    require(extraLeftPad >= 0, { "extraLeftPad must be non-negative or omitted (current: $extraLeftPad)" })
-    require(extraRightPad >= 0, { "extraRightPad must be non-negative or omitted (current: $extraRightPad)" })
+    validate(extraLeftPad >= 0, { "extraLeftPad must be non-negative or omitted (current: $extraLeftPad)" })
+    validate(extraRightPad >= 0, { "extraRightPad must be non-negative or omitted (current: $extraRightPad)" })
     val maxLength = this.maxStringLength()
     val padAction: (String) -> String = { it.padEnd(maxLength + extraRightPad).padStart(maxLength + extraLeftPad + extraRightPad) }
     return this.map { padAction(it.toString()) }
 }
 
+@Throws(ValidationException::class)
 fun List<*>.alignCenter(extraLeftPad: Int = 0, extraRightPad: Int = 0): List<String> {
-    require(extraLeftPad >= 0, { "extraLeftPad must be non-negative or omitted (current: $extraLeftPad)" })
-    require(extraRightPad >= 0, { "extraRightPad must be non-negative or omitted (current: $extraRightPad)" })
+    validate(extraLeftPad >= 0, { "extraLeftPad must be non-negative or omitted (current: $extraLeftPad)" })
+    validate(extraRightPad >= 0, { "extraRightPad must be non-negative or omitted (current: $extraRightPad)" })
     val maxLength = this.maxStringLength()
     val padAction: (String) -> String = {
         StringUtils.center(it, maxLength).padEnd(maxLength + extraRightPad).padStart(maxLength + extraLeftPad + extraRightPad)
@@ -31,9 +36,9 @@ fun List<*>.alignCenter(extraLeftPad: Int = 0, extraRightPad: Int = 0): List<Str
     return this.map { padAction(it.toString()) }
 }
 
-@Throws(IllegalArgumentException::class)
+@Throws(ValidationException::class)
 private fun Collection<*>.validateEqualSize(other: Collection<*>) {
-    require(other.size == this.size) { "Both collections must have equal sizes! Sizes: left=${this.size}, right=${other.size}" }
+    validate(other.size == this.size) { "Both collections must have equal sizes! Sizes: left=${this.size}, right=${other.size}" }
 }
 
 /**
@@ -43,6 +48,7 @@ private fun Collection<*>.validateEqualSize(other: Collection<*>) {
  * @param other [List]`<*>`. Must have the same size as the receiver [List]
  * @return A new [List]`<String>` with the concatenated values.
  */
+@Throws(ValidationException::class)
 infix fun List<*>.concatEach(other: List<*>): List<String> {
     validateEqualSize(other)
     return this.mapIndexed { index, t -> t.toString() + other[index].toString() }

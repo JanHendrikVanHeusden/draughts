@@ -17,6 +17,7 @@ package nl.jhvh.draughts
 
 import mu.KLogger
 import mu.NamedKLogging
+import nl.jhvh.draughts.rule.ValidationException
 import org.apache.logging.slf4j.Log4jLogger
 import org.slf4j.ILoggerFactory
 import org.slf4j.LoggerFactory
@@ -33,12 +34,12 @@ private fun log4J2Logger(name: String): Log4jLogger = loggerFactory.getLogger(na
 /**
  * If (and only if) the [condition] is `false`:
  *  * the [message] is logged (insofar enabled);
- *  * an [IllegalArgumentException] is thrown with the given [message]
+ *  * an [ValidationException] is thrown with the given [message]
  * @param condition The condition to check
  * @param logLevel The [Level] to log with, if enabled; default = [Level.WARN]
  * @param message The `() -> String` message provider that will be evaluated only when needed
  */
-@Throws(IllegalArgumentException::class)
+@Throws(ValidationException::class)
 internal inline fun <reified T : Any> T.requireAndLog(condition: Boolean, logLevel: Level = Level.WARN, message: () -> String) {
     if (!condition) {
         val logger= log4J2Logger(T::class.java.name)
@@ -55,7 +56,7 @@ internal inline fun <reified T : Any> T.requireAndLog(condition: Boolean, logLev
  * @param logLevel The [Level] to log with, if enabled; default = [Level.ERROR]
  * @param message The `() -> String` message provider that will be evaluated only when needed
  */
-@Throws(IllegalStateException::class)
+@Throws(ValidationException::class)
 internal inline fun <reified T : Any> T.checkAndLog(condition: Boolean, logLevel: Level = Level.ERROR, message: () -> String) {
     if (!condition) {
         val logger= log4J2Logger(T::class.java.name)
@@ -68,12 +69,16 @@ internal fun userInfo() {
     println(System.lineSeparator())
 }
 
-internal fun userInfo(text: String) {
+internal fun userInfo(text: String): String {
     println(text)
+    return text
 }
 
-internal fun userInfo(objectToLog: Any?) {
-    userInfo(objectToLog?.toString() ?: "null")
+internal fun userInfo(objectToLog: Any?): String {
+    with(objectToLog?.toString() ?: "null") {
+        userInfo(this)
+        return this
+    }
 }
 
 internal inline fun <reified T : Any> T.userInfo(toLog: () -> Any?) {
@@ -84,3 +89,5 @@ internal inline fun <reified T : Any> T.userInfo(toLog: () -> Any?) {
         logger.log().error(e.message)
     }
 }
+
+internal fun Throwable.summary(): String = this.message ?: (this.javaClass.simpleName + ": " + this.stackTrace.first())

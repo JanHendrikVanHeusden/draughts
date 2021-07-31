@@ -1,15 +1,40 @@
 package nl.jhvh.draughts.model.game
 
 import nl.jhvh.draughts.model.DraughtsBoard
-import nl.jhvh.draughts.model.base.PlayerType
+import nl.jhvh.draughts.model.DraughtsPiece
+import nl.jhvh.draughts.model.base.*
 import nl.jhvh.draughts.model.game.move.MovementChain
 import nl.jhvh.draughts.model.structure.Board
 import nl.jhvh.draughts.model.structure.Piece
+import nl.jhvh.draughts.model.structure.Square
+import nl.jhvh.draughts.rule.validate
 import nl.jhvh.draughts.userInfo
 
 internal class DraughtsGame: Game, Board by DraughtsBoard() {
 
     private var isStartingPlayersTurn = true
+
+    val startingPlayerPieces: Set<Piece> = let {
+        positionRange.reversed().take(piecesPerPlayer)
+            .map { position -> DraughtsPiece(this, PlayableCoordinate(position), PlayerType.STARTING_PLAYER) }
+            .toSet()
+    }.onEach { piece -> squares[piece.currentCoordinate!!.xy]?.occupyingPiece = piece }
+
+    val secondPlayerPieces: Set<Piece> = let {
+        positionRange.take(piecesPerPlayer)
+            .map { position -> DraughtsPiece(this, PlayableCoordinate(position), PlayerType.SECOND_PLAYER) }
+            .toSet()
+    }.onEach { piece -> squares[piece.currentCoordinate!!.xy]?.occupyingPiece = piece }
+
+    override val allPieces: Set<Piece> = startingPlayerPieces + secondPlayerPieces
+
+    override val allPiecesByPlayerType: Map<PlayerType, Set<Piece>> = mapOf(PlayerType.STARTING_PLAYER to startingPlayerPieces, PlayerType.SECOND_PLAYER to secondPlayerPieces)
+
+    override fun getPiece(position: Int): Piece? = getPiece(PlayableCoordinate(position).xy)
+
+    override fun getPiece(square: Square): Piece? = getPiece(square.xy)
+
+    override fun getPiece(xy: Pair<Int, Int>): Piece? = squares[xy]?.occupyingPiece
 
     override fun playerTypeInTurn(): PlayerType =
         if (isStartingPlayersTurn) PlayerType.STARTING_PLAYER else PlayerType.SECOND_PLAYER
@@ -35,12 +60,12 @@ internal class DraughtsGame: Game, Board by DraughtsBoard() {
         userInfo()
         val playerInTurn = playerTypeInTurn()
         val piece = movement.piece
-        require(piece.playerType == playerInTurn) { "${playerInTurn.color} is in turn and must not play opponent's piece! piece = ${piece.currentCoordinate!!.xy}" }
-        require(movement.asPositions in piece.possibleMoves().map { it.asPositions }) {
+        validate(piece.playerType == playerInTurn) { "${playerInTurn.color} is in turn and must not play opponent's piece! piece = ${piece.currentCoordinate!!.xy}" }
+        validate(movement.asPositions in piece.possibleMoves().map { it.asPositions }) {
             "This move is not possible for this piece! You may need to capture more pieces; or square to move to may be occupied already.\nMove you tried = \n${movement.asPositions}"
         }
         val allowedMovesAllPieces = this.allowedMoves()
-        require(movement.asPositions in allowedMovesAllPieces.map { it.asPositions }) {
+        validate(movement.asPositions in allowedMovesAllPieces.map { it.asPositions }) {
             "This move is not allowed, it does not have the highest capture count! Allowed moves: ${allowedMovesAllPieces.map { it.asPositions }.joinToString("\n", "\n")}"
         }
         piece.move(movement)
@@ -49,9 +74,9 @@ internal class DraughtsGame: Game, Board by DraughtsBoard() {
     }
 
     override fun move(piece: Piece, move: List<Int>): Boolean {
-        require(move.size >= 2) { """No "to" position specified! intended move = $move, piece = $piece""" }
+        validate(move.size >= 2) { """No "to" position specified! intended move = $move, piece = $piece""" }
         val possibleMoves = piece.possibleMoves().toList()
-        require(possibleMoves.isNotEmpty() && possibleMoves.maxOf { it.moves.isNotEmpty() }) { "This piece can not move! piece = $piece, intended move = $move" }
+        validate(possibleMoves.isNotEmpty() && possibleMoves.maxOf { it.moves.isNotEmpty() }) { "This piece can not move! piece = $piece, intended move = $move" }
 
         // find the move-chain for the given positions
         val chain = possibleMoves.firstOrNull { chain -> chain.asPositions == move }
@@ -63,19 +88,19 @@ internal class DraughtsGame: Game, Board by DraughtsBoard() {
 
         // If we are here, the move is not possible. Find best match, if any, as a suggestion for the user
         if (possibleMoves.size == 1) {
-            require(false) { "The only possible move for this piece = ${possibleMoves[0].asPositions}" }
+            validate(false) { "The only possible move for this piece = ${possibleMoves[0].asPositions}" }
         }
         val firstTo = move[1]
         val matchingTos = possibleMoves.filter { it.moves.map { it.to.position }.contains(firstTo) }
         if (matchingTos.isNotEmpty()) {
-            require(false) {
+            validate(false) {
                 """The intended move "$move" is not possible. Best matching suggestions for this piece are:
                     |
                 """.trimMargin() +
                         matchingTos.map { it.asPositions }.joinToString(System.lineSeparator())
             }
         }
-        require(false) { """Move "$move" is not possible for this piece! A square to move to may be occupied already.
+        validate(false) { """Move "$move" is not possible for this piece! A square to move to may be occupied already.
             |Intended move = $move""".trimMargin() }
         return false
     }
@@ -85,5 +110,9 @@ internal class DraughtsGame: Game, Board by DraughtsBoard() {
         userInfo()
         userInfo { "${playerTypeInTurn().color} is now in turn!" }
     }
+
+    override fun isCrowningPosition(piece: Piece): Boolean =
+        !piece.isCaptured && ((piece.playerType.hasFirstTurn && piece.currentCoordinate!!.y == boardLength -1) ||
+                (!piece.playerType.hasFirstTurn && piece.currentCoordinate!!.y == 0))
 
 }

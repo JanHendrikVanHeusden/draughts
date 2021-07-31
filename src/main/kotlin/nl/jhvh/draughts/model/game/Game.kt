@@ -4,8 +4,19 @@ import nl.jhvh.draughts.model.base.PlayerType
 import nl.jhvh.draughts.model.game.move.MovementChain
 import nl.jhvh.draughts.model.structure.Board
 import nl.jhvh.draughts.model.structure.Piece
+import nl.jhvh.draughts.model.structure.Square
 
 interface Game: Board {
+
+    val allPieces: Set<Piece>
+
+    val allPiecesByPlayerType: Map<PlayerType, Set<Piece>>
+
+    fun getPiece(position: Int): Piece?
+
+    fun getPiece(square: Square): Piece?
+
+    fun getPiece(xy: Pair<Int, Int>): Piece?
 
     /** @return the current [PlayerType] in turn */
     fun playerTypeInTurn(): PlayerType
@@ -32,5 +43,7 @@ interface Game: Board {
     fun move(movement: MovementChain)
 
     fun move(piece: Piece, move: List<Int>): Boolean
+
+    fun isCrowningPosition(piece: Piece): Boolean
 
 }

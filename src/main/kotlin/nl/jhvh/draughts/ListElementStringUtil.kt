@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils
 /** @return The length of the longest [toString] of all elements in the collection */
 fun Collection<*>.maxStringLength(): Int = this.map { s -> s.toString().length } .maxOrNull()!!
 
+@Throws(ValidationException::class)
 fun List<*>.alignRight(extraLeftPad: Int = 0, extraRightPad: Int = 0): List<String> {
     validate(extraLeftPad >= 0, { "extraLeftPad must be non-negative or omitted (current: $extraLeftPad)" })
     validate(extraRightPad >= 0, { "extraRightPad must be non-negative or omitted (current: $extraRightPad)" })
@@ -15,6 +16,7 @@ fun List<*>.alignRight(extraLeftPad: Int = 0, extraRightPad: Int = 0): List<Stri
     return this.map { padAction(it.toString()) }
 }
 
+@Throws(ValidationException::class)
 fun List<*>.alignLeft(extraLeftPad: Int = 0, extraRightPad: Int = 0): List<String> {
     validate(extraLeftPad >= 0, { "extraLeftPad must be non-negative or omitted (current: $extraLeftPad)" })
     validate(extraRightPad >= 0, { "extraRightPad must be non-negative or omitted (current: $extraRightPad)" })
@@ -23,6 +25,7 @@ fun List<*>.alignLeft(extraLeftPad: Int = 0, extraRightPad: Int = 0): List<Strin
     return this.map { padAction(it.toString()) }
 }
 
+@Throws(ValidationException::class)
 fun List<*>.alignCenter(extraLeftPad: Int = 0, extraRightPad: Int = 0): List<String> {
     validate(extraLeftPad >= 0, { "extraLeftPad must be non-negative or omitted (current: $extraLeftPad)" })
     validate(extraRightPad >= 0, { "extraRightPad must be non-negative or omitted (current: $extraRightPad)" })
@@ -45,6 +48,7 @@ private fun Collection<*>.validateEqualSize(other: Collection<*>) {
  * @param other [List]`<*>`. Must have the same size as the receiver [List]
  * @return A new [List]`<String>` with the concatenated values.
  */
+@Throws(ValidationException::class)
 infix fun List<*>.concatEach(other: List<*>): List<String> {
     validateEqualSize(other)
     return this.mapIndexed { index, t -> t.toString() + other[index].toString() }

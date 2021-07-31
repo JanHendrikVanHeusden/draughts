@@ -10,7 +10,7 @@ import nl.jhvh.draughts.model.structure.Square
 
 internal data class BoardSquare(override val board: Board, override val xy: Pair<Int, Int>, override val squareType: SquareType) : Square {
 
-    override var piece: Piece? = null
+    override var occupyingPiece: Piece? = null
 
     override fun format(draughtsFormatter: DraughtsFormatting<BoardElement, FormattableList>): FormattableList {
         return draughtsFormatter.format(this)

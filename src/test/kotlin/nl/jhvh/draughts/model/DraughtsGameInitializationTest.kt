@@ -3,14 +3,10 @@ package nl.jhvh.draughts.model
 import nl.jhvh.draughts.model.base.PlayableCoordinate
 import nl.jhvh.draughts.model.base.PlayerType.SECOND_PLAYER
 import nl.jhvh.draughts.model.base.PlayerType.STARTING_PLAYER
-import nl.jhvh.draughts.model.base.boardLength
-import nl.jhvh.draughts.model.base.boardWidth
 import nl.jhvh.draughts.model.base.maxPiecePositionNumber
 import nl.jhvh.draughts.model.base.piecesPerPlayer
-import nl.jhvh.draughts.model.base.positionRange
 import nl.jhvh.draughts.model.game.DraughtsGame
 import nl.jhvh.draughts.model.game.Game
-import nl.jhvh.draughts.model.structure.Board
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -34,11 +30,11 @@ internal class DraughtsGameInitializationTest {
         val expectedSquaresWithWhitePieces: Set<Pair<Int, Int>> =
             (maxPiecePositionNumber - piecesPerPlayer+1..maxPiecePositionNumber).map { PlayableCoordinate(it).xy }.toSet()
 
-        expectedSquaresWithDarkPieces.forEach { assertThat(squares[it]!!.piece!!.playerType).isEqualTo(SECOND_PLAYER) }
-        expectedSquaresWithWhitePieces.forEach { assertThat(squares[it]!!.piece!!.playerType).isEqualTo(STARTING_PLAYER) }
+        expectedSquaresWithDarkPieces.forEach { assertThat(squares[it]!!.occupyingPiece!!.playerType).isEqualTo(SECOND_PLAYER) }
+        expectedSquaresWithWhitePieces.forEach { assertThat(squares[it]!!.occupyingPiece!!.playerType).isEqualTo(STARTING_PLAYER) }
         // squares without pieces
         (squares.keys - expectedSquaresWithDarkPieces - expectedSquaresWithWhitePieces)
-            .forEach { assertThat(squares[it]!!.piece).isNull() }
+            .forEach { assertThat(squares[it]!!.occupyingPiece).isNull() }
     }
 
     @Test

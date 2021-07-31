@@ -1,10 +1,6 @@
 package nl.jhvh.draughts.model
 
-import io.mockk.confirmVerified
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.spyk
-import io.mockk.verify
+import io.mockk.*
 import nl.jhvh.draughts.model.base.PlayerType
 import nl.jhvh.draughts.model.base.boardLength
 import nl.jhvh.draughts.model.base.boardWidth

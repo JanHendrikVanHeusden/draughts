@@ -28,10 +28,10 @@ internal class DraughtsPiece(
             }
             check(value != null || isCaptured) { """Can set the current coordinate to null only if piece was captured, but it wasn't captured! (piece: "$field")""" }
             check(!(field == null && value != null)) { """Piece "$this" is captured already, can not be moved to $value""" }
-            this.board.squares[field?.xy]?.piece = null
+            this.board.squares[field?.xy]?.occupyingPiece = null
             field = value
             if (value != null) {
-                this.board.squares[value.xy]!!.piece = this
+                this.board.squares[value.xy]!!.occupyingPiece = this
             }
         }
 
@@ -193,13 +193,13 @@ internal class DraughtsPiece(
     }
 
     fun canMoveTo(xy: Pair<Int, Int>): Boolean =
-        this.board.squares[xy] != null && this.board.squares[xy]?.piece == null
+        this.board.squares[xy] != null && this.board.squares[xy]?.occupyingPiece == null
 
     fun enemyPiece(xy: Pair<Int, Int>): Piece? {
         if (this.board.squares[xy] == null) {
             return null
         }
-        val piece = this.board.squares[xy]?.piece
+        val piece = this.board.squares[xy]?.occupyingPiece
         if (piece != null && piece.playerType != this.playerType) {
             return piece // enemy piece
         }

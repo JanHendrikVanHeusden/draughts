@@ -1,10 +1,6 @@
 package nl.jhvh.draughts.model
 
-import io.mockk.clearMocks
-import io.mockk.confirmVerified
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
+import io.mockk.*
 import nl.jhvh.draughts.formatting.DraughtsFormatting
 import nl.jhvh.draughts.formatting.textformat.FormattableList
 import nl.jhvh.draughts.model.base.BoardElement
@@ -13,6 +9,7 @@ import nl.jhvh.draughts.model.base.PlayerType
 import nl.jhvh.draughts.model.game.Game
 import nl.jhvh.draughts.model.structure.Board
 import nl.jhvh.draughts.model.structure.Piece
+import nl.jhvh.draughts.model.structure.Square
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
@@ -21,9 +18,9 @@ import kotlin.test.assertFails
 
 internal class DraughtsPieceTest {
 
-    private val gameMock: Game = mockk()
-    private val boardMock: Board = mockk()
-    private val coordinateMock: PlayableCoordinate = mockk()
+    private val gameMock: Game = mockk("gameMock")
+    private val boardMock: Board = mockk("boardMock")
+    private val coordinateMock: PlayableCoordinate = mockk("coordinateMock")
 
     @BeforeEach
     fun setUp() {
@@ -42,7 +39,16 @@ internal class DraughtsPieceTest {
         // given
         val subject: Piece = DraughtsPiece(gameMock, coordinateMock, PlayerType.SECOND_PLAYER)
         assertThat(subject.currentCoordinate).isSameAs(coordinateMock)
-        val coordinateMock2: PlayableCoordinate = mockk()
+
+        val xy37 = Pair(3, 7)
+        val coordinateMock2: PlayableCoordinate = mockk("coordinateMock2")
+        every { coordinateMock2.xy } returns xy37
+
+        val squareMock: Square = mockk("squareMock")
+        every { squareMock.occupyingPiece } returns subject
+        every { squareMock setProperty "occupyingPiece" value(subject) } just Runs
+        every { subject.board.squares } returns mapOf(xy37 to squareMock)
+
         // when
         subject.currentCoordinate = coordinateMock2
         // then
@@ -50,7 +56,7 @@ internal class DraughtsPieceTest {
     }
 
     @Test
-    fun `set currentCoordinate to null when not captured throws exception`() {
+    fun `set currentCoordinate to null when not captured should throw exception`() {
         // given
         val subject: Piece = DraughtsPiece(gameMock, coordinateMock, PlayerType.SECOND_PLAYER)
         assertThat(subject.currentCoordinate).isEqualTo(coordinateMock)
@@ -64,7 +70,7 @@ internal class DraughtsPieceTest {
     }
 
     @Test
-    fun `set currentCoordinate to non-null when already captured throws exception`() {
+    fun `set currentCoordinate to non-null when already captured should throw exception`() {
         // given
         val subject: Piece = DraughtsPiece(gameMock, coordinateMock, PlayerType.SECOND_PLAYER)
         subject.isCaptured = true
@@ -104,7 +110,7 @@ internal class DraughtsPieceTest {
     }
 
     @Test
-    fun `uncapturing throws exception`() {
+    fun `uncapturing should throw exception`() {
         // given
         val subject: Piece = DraughtsPiece(gameMock, coordinateMock, PlayerType.SECOND_PLAYER)
         subject.isCaptured = true
@@ -154,6 +160,10 @@ internal class DraughtsPieceTest {
         // TODO
     }
 
+    // This test may fail on some JDK's (e.g. Adopt OpenJDK 11 Hotspot and Adopt OpenJDK 16 OpenJ9)
+    // with this error message:
+    //   io.mockk.MockKException: Class cast exception happened. Probably type information was erased.
+    //   In this case use `hint` before call to specify exact return type of a method.
     @Test
     fun format() {
         // given
@@ -191,8 +201,12 @@ internal class DraughtsPieceTest {
 
         val equal: Piece = DraughtsPiece(gameMock, initialCoordinateMock1, PlayerType.SECOND_PLAYER)
         val equalInitialCoordinate: Piece = DraughtsPiece(gameMock, initialCoordinateMock1, PlayerType.STARTING_PLAYER)
-        val notSameBoard: Piece = DraughtsPiece(mockk(), initialCoordinateMock1, PlayerType.STARTING_PLAYER)
         val notEqualInitialCoordinate: Piece = DraughtsPiece(gameMock, initialCoordinateMock2, PlayerType.SECOND_PLAYER)
+
+        val anotherBoardMock: Board = mockk("another Board")
+        val anotherGameMock: Game = mockk("another Game")
+        every { anotherGameMock.board } returns anotherBoardMock
+        val notSameBoard: Piece = DraughtsPiece(anotherGameMock, initialCoordinateMock1, PlayerType.STARTING_PLAYER)
 
         // when, then
         assertThat(subject).isEqualTo(equal)

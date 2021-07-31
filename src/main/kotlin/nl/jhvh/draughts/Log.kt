@@ -17,6 +17,7 @@ package nl.jhvh.draughts
 
 import mu.KLogger
 import mu.NamedKLogging
+import nl.jhvh.draughts.rule.ValidationException
 import org.apache.logging.slf4j.Log4jLogger
 import org.slf4j.ILoggerFactory
 import org.slf4j.LoggerFactory
@@ -38,7 +39,7 @@ private fun log4J2Logger(name: String): Log4jLogger = loggerFactory.getLogger(na
  * @param logLevel The [Level] to log with, if enabled; default = [Level.WARN]
  * @param message The `() -> String` message provider that will be evaluated only when needed
  */
-@Throws(IllegalArgumentException::class)
+@Throws(ValidationException::class)
 internal inline fun <reified T : Any> T.requireAndLog(condition: Boolean, logLevel: Level = Level.WARN, message: () -> String) {
     if (!condition) {
         val logger= log4J2Logger(T::class.java.name)
@@ -55,7 +56,7 @@ internal inline fun <reified T : Any> T.requireAndLog(condition: Boolean, logLev
  * @param logLevel The [Level] to log with, if enabled; default = [Level.ERROR]
  * @param message The `() -> String` message provider that will be evaluated only when needed
  */
-@Throws(IllegalStateException::class)
+@Throws(ValidationException::class)
 internal inline fun <reified T : Any> T.checkAndLog(condition: Boolean, logLevel: Level = Level.ERROR, message: () -> String) {
     if (!condition) {
         val logger= log4J2Logger(T::class.java.name)

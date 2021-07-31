@@ -14,7 +14,6 @@ import nl.jhvh.draughts.rule.ValidationException
 import nl.jhvh.draughts.rule.validate
 import nl.jhvh.draughts.summary
 import nl.jhvh.draughts.userInfo
-import java.lang.RuntimeException
 
 class DraughtsService : DraughtsServable {
 

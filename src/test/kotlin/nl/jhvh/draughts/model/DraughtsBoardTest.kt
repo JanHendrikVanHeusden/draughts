@@ -3,17 +3,11 @@ package nl.jhvh.draughts.model
 import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.spyk
 import io.mockk.verify
 import nl.jhvh.draughts.formatting.DraughtsFormatting
 import nl.jhvh.draughts.formatting.textformat.FormattableList
 import nl.jhvh.draughts.model.base.BoardElement
-import nl.jhvh.draughts.model.base.PlayerType
-import nl.jhvh.draughts.model.base.boardLength
-import nl.jhvh.draughts.model.base.boardWidth
 import nl.jhvh.draughts.model.structure.Board
-import nl.jhvh.draughts.model.structure.Piece
-import nl.jhvh.draughts.model.structure.Square
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -28,6 +22,10 @@ internal class DraughtsBoardTest {
 
     private val subject: Board = DraughtsBoard()
 
+    // This test may fail on some JDK's (e.g. Adopt OpenJDK 11 Hotspot and Adopt OpenJDK 16 OpenJ9)
+    // with this error message:
+    //   io.mockk.MockKException: Class cast exception happened. Probably type information was erased.
+    //   In this case use `hint` before call to specify exact return type of a method.
     @Test
     fun format() {
         // given

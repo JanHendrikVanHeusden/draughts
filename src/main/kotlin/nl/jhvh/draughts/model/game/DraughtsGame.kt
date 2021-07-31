@@ -2,11 +2,7 @@ package nl.jhvh.draughts.model.game
 
 import nl.jhvh.draughts.model.DraughtsBoard
 import nl.jhvh.draughts.model.DraughtsPiece
-import nl.jhvh.draughts.model.base.PlayableCoordinate
-import nl.jhvh.draughts.model.base.PlayerType
-import nl.jhvh.draughts.model.base.boardLength
-import nl.jhvh.draughts.model.base.piecesPerPlayer
-import nl.jhvh.draughts.model.base.positionRange
+import nl.jhvh.draughts.model.base.*
 import nl.jhvh.draughts.model.game.move.MovementChain
 import nl.jhvh.draughts.model.structure.Board
 import nl.jhvh.draughts.model.structure.Piece
@@ -22,13 +18,13 @@ internal class DraughtsGame: Game, Board by DraughtsBoard() {
         positionRange.reversed().take(piecesPerPlayer)
             .map { position -> DraughtsPiece(this, PlayableCoordinate(position), PlayerType.STARTING_PLAYER) }
             .toSet()
-    }.onEach { piece -> squares[piece.currentCoordinate!!.xy]?.piece = piece }
+    }.onEach { piece -> squares[piece.currentCoordinate!!.xy]?.occupyingPiece = piece }
 
     val secondPlayerPieces: Set<Piece> = let {
         positionRange.take(piecesPerPlayer)
             .map { position -> DraughtsPiece(this, PlayableCoordinate(position), PlayerType.SECOND_PLAYER) }
             .toSet()
-    }.onEach { piece -> squares[piece.currentCoordinate!!.xy]?.piece = piece }
+    }.onEach { piece -> squares[piece.currentCoordinate!!.xy]?.occupyingPiece = piece }
 
     override val allPieces: Set<Piece> = startingPlayerPieces + secondPlayerPieces
 
@@ -38,7 +34,7 @@ internal class DraughtsGame: Game, Board by DraughtsBoard() {
 
     override fun getPiece(square: Square): Piece? = getPiece(square.xy)
 
-    override fun getPiece(xy: Pair<Int, Int>): Piece? = squares[xy]?.piece
+    override fun getPiece(xy: Pair<Int, Int>): Piece? = squares[xy]?.occupyingPiece
 
     override fun playerTypeInTurn(): PlayerType =
         if (isStartingPlayersTurn) PlayerType.STARTING_PLAYER else PlayerType.SECOND_PLAYER

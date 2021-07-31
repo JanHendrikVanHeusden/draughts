@@ -8,7 +8,7 @@ import nl.jhvh.draughts.model.structure.Square
 internal class SquareTextFormatter(val pieceFormatter: PieceTextFormatter) : DraughtsFormatting<Square, FormattableList> {
 
     override fun format(element: Square): FormattableList {
-        val piece = element.piece
+        val piece = element.occupyingPiece
 
         @Suppress("UNCHECKED_CAST")
         val formattedPiece: FormattableList =

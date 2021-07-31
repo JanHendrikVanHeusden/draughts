@@ -29,6 +29,7 @@ inline fun validate(validationCheck: Boolean, messageProvider: () -> String) {
             message = messageProvider()
         } catch (e: Exception) {
             message = e.message?.trim() ?: "Exception occurred inside validation while evaluating the `messageProvider`"
+            // Not very elegant normal log() method is not available in a top level function
             NamedKLogging("validate").logger.error(message, e)
         }
         throw ValidationException(message)

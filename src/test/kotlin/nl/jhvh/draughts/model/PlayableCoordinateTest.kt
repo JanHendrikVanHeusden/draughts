@@ -1,10 +1,6 @@
 package nl.jhvh.draughts.model
 
-import nl.jhvh.draughts.model.base.PlayableCoordinate
-import nl.jhvh.draughts.model.base.boardLength
-import nl.jhvh.draughts.model.base.boardWidth
-import nl.jhvh.draughts.model.base.maxPiecePositionNumber
-import nl.jhvh.draughts.model.base.minPiecePositionNumber
+import nl.jhvh.draughts.model.base.*
 import nl.jhvh.draughts.rule.ValidationException
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach

@@ -18,13 +18,13 @@ internal class DraughtsGame: Game, Board by DraughtsBoard() {
         positionRange.reversed().take(piecesPerPlayer)
             .map { position -> DraughtsPiece(this, PlayableCoordinate(position), PlayerType.STARTING_PLAYER) }
             .toSet()
-    }.onEach { piece -> squares[piece.currentCoordinate!!.xy]?.occupyingPiece = piece }
+    }.onEach { piece -> squares[piece.currentCoordinate!!.xy]!!.occupyingPiece = piece }
 
     val secondPlayerPieces: Set<Piece> = let {
         positionRange.take(piecesPerPlayer)
             .map { position -> DraughtsPiece(this, PlayableCoordinate(position), PlayerType.SECOND_PLAYER) }
             .toSet()
-    }.onEach { piece -> squares[piece.currentCoordinate!!.xy]?.occupyingPiece = piece }
+    }.onEach { piece -> squares[piece.currentCoordinate!!.xy]!!.occupyingPiece = piece }
 
     override val allPieces: Set<Piece> = startingPlayerPieces + secondPlayerPieces
 

@@ -36,6 +36,8 @@ interface Piece: BoardElement, GameElement, Comparable<Piece> {
      */
     fun allowedMoves(): Collection<MovementChain>
 
+    fun isEnemyPiece(other: Piece?): Boolean
+
     override fun equals(other: Any?): Boolean
 
     override fun hashCode(): Int

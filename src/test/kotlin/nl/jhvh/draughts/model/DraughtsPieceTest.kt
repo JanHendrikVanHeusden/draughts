@@ -125,6 +125,30 @@ internal class DraughtsPieceTest {
     }
 
     @Test
+    fun isEnemyPiece() {
+        val firstPlayerPiece: Piece = DraughtsPiece(gameMock, coordinateMock, PlayerType.STARTING_PLAYER)
+        val firstPlayerPieceMock: Piece = mockk()
+        every { firstPlayerPieceMock.playerType } returns PlayerType.STARTING_PLAYER
+
+        val secondPlayerPiece: Piece = DraughtsPiece(gameMock, coordinateMock, PlayerType.SECOND_PLAYER)
+        val secondPlayerPieceMock: Piece = mockk()
+        every { secondPlayerPieceMock.playerType } returns PlayerType.SECOND_PLAYER
+
+        assertThat(firstPlayerPiece.isEnemyPiece(other = secondPlayerPiece)).isTrue()
+        assertThat(firstPlayerPiece.isEnemyPiece(other = firstPlayerPieceMock)).isFalse()
+        verify { firstPlayerPieceMock.playerType }
+
+        assertThat(secondPlayerPiece.isEnemyPiece(other = firstPlayerPiece)).isTrue()
+        assertThat(secondPlayerPiece.isEnemyPiece(other = secondPlayerPieceMock)).isFalse()
+        verify { secondPlayerPieceMock.playerType }
+
+        assertThat(firstPlayerPiece.isEnemyPiece(other = null)).isFalse()
+        assertThat(secondPlayerPiece.isEnemyPiece(other = null)).isFalse()
+
+        confirmVerified(firstPlayerPieceMock, secondPlayerPieceMock)
+    }
+
+    @Test
     @Disabled("Not yet implemented: test for isCrowned()")
     fun isCrowned() {
         // TODO

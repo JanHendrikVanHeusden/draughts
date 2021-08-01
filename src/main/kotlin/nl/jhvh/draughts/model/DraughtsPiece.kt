@@ -74,6 +74,8 @@ internal class DraughtsPiece(
         return possibleMoves.filter { it.captureCount == maxCaptureCount }
     }
 
+    override fun isEnemyPiece(other: Piece?): Boolean = other != null && other.playerType != this.playerType
+
     override fun possibleMoves(): Collection<MovementChain> {
         if (isCaptured) {
             return emptyList()
@@ -196,14 +198,8 @@ internal class DraughtsPiece(
         this.board.squares[xy] != null && this.board.squares[xy]?.occupyingPiece == null
 
     fun enemyPiece(xy: Pair<Int, Int>): Piece? {
-        if (this.board.squares[xy] == null) {
-            return null
-        }
         val piece = this.board.squares[xy]?.occupyingPiece
-        if (piece != null && piece.playerType != this.playerType) {
-            return piece // enemy piece
-        }
-        return null
+        return if (isEnemyPiece(piece)) piece else null
     }
 
     override fun equals(other: Any?): Boolean =
